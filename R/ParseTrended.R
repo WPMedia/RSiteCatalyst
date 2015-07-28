@@ -105,6 +105,7 @@ ParseTrended <- function(report.data) {
   if(is.null(seg)){
     return(formatted.df)
   } else {
+    seg = data.frame(toString(do.call(paste, c(seg['id'], sep="&"))),toString(do.call(paste, c(seg['name'], sep="&"))))
     names(seg) <- c("segment.id", "segment.name")
     return(cbind(formatted.df, seg, row.names = NULL))
   }

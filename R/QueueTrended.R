@@ -60,7 +60,7 @@
 
 QueueTrended <- function(reportsuite.id, date.from, date.to, metrics, elements,
                         top=0,start=0,selected=c(),search=c(),search.type='or',
-                        date.granularity='day', segment.id='', segment.inline='', classification = character(0), 
+                        date.granularity='day', segment.id='',segments=NULL, segment.inline='', classification = character(0), 
                         anomaly.detection=FALSE, data.current=FALSE, expedite=FALSE,
                         interval.seconds=5,max.attempts=120) {
   
@@ -97,8 +97,12 @@ QueueTrended <- function(reportsuite.id, date.from, date.to, metrics, elements,
   if(expedite==TRUE) { 
     report.description$reportDescription$expedite <- unbox(expedite)
   }
+  if(! is.null(segments)){
+    report.description$reportDescription$segments = data.frame(id = segments)
+  }
   report.description$reportDescription$metrics = data.frame(id = metrics)
 
+  
   elements.formatted <- list()
   # build up each element with selections
   i <- 0
@@ -133,6 +137,7 @@ QueueTrended <- function(reportsuite.id, date.from, date.to, metrics, elements,
     }
   }
   report.description$reportDescription$elements <- elements.formatted
+  
 
   report.data <- SubmitJsonQueueReport(toJSON(report.description),interval.seconds=interval.seconds,max.attempts=max.attempts)
 

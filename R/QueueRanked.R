@@ -60,7 +60,7 @@
 
 QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
                         top=0,start=0,selected=c(), search=c(),search.type='or',
-                        segment.id='', segment.inline='', classification=c(),data.current=FALSE, 
+                        segment.id='', segments=NULL, segment.inline='', classification=c(),data.current=FALSE, 
                         expedite=FALSE,interval.seconds=5,max.attempts=120) {
 
   # build JSON description
@@ -83,6 +83,10 @@ QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
   if(expedite==TRUE) { 
     report.description$reportDescription$expedite <- unbox(expedite)
   }
+  if(! is.null(segments)){
+    report.description$reportDescription$segments = data.frame(id = segments)
+  }
+  
   report.description$reportDescription$metrics = data.frame(id = metrics)
 
   elements.formatted <- list()
