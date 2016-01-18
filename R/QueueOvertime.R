@@ -27,7 +27,7 @@
 #' @param validate Weather to submit report definition for validation before requesting the data.
 #'
 #' @importFrom jsonlite toJSON unbox
-#'
+#' @importFrom plyr ddply
 #' @return Data frame
 #' 
 #' @examples
@@ -61,9 +61,10 @@
 QueueOvertime <- function(reportsuite.id, date.from, date.to, metrics,
                         date.granularity='day', segment.id='',segments=NULL, segment.inline='', anomaly.detection=FALSE,
                         data.current=FALSE, expedite=FALSE,interval.seconds=5,max.attempts=120,validate=TRUE) {
-  
+						
   # build JSON description
   # we have to use unbox to force jsonlist not put strings into single-element arrays
+  if(length(reportsuite.id) == 1){
   report.description <- c()
   report.description$reportDescription <- c(data.frame(matrix(ncol=0, nrow=1)))
   report.description$reportDescription$dateFrom <- unbox(date.from)
@@ -86,6 +87,35 @@ QueueOvertime <- function(reportsuite.id, date.from, date.to, metrics,
   
   report.data <- SubmitJsonQueueReport(toJSON(report.description),interval.seconds=interval.seconds,max.attempts=max.attempts,validate=validate)
 
-  return(report.data) 
-
+  res <- report.data
+  }
+  else {
+	  # Loop through all the report suites, requesting once for each
+	  res <- list()
+	  for (rs in reportsuite.id){
+	  print(paste('Making request for', rs))
+	  
+	  res <- append(res,list(QueueOvertime(reportsuite.id[1],date.from, date.to, metrics,
+date.granularity, segment.id,segments, segment.inline, anomaly.detection,
+data.current, expedite,interval.seconds,max.attempts,validate)))
+	  }
+	  # Merge the collected dataframes
+	  datetime_cache <- res[[1]]$datetime
+	  # Collect the row names
+	  nam <- c(rownames(res[[1]]))
+	  for (df in tail(res,length(res) -1)){
+	  		  nam <- c(nam, rownames(df))
+	  }
+	  
+	  # Bind, melt and sum the data
+	  res <- cbind(names=nam,rbind.fill(res))
+	  res <- ddply(res, .(names),function(x) colSums(x[metrics], na.rm = TRUE))
+	  
+	  # Restore the date range
+	  rownames(res) <- datetime_cache 
+     	   
+	 
+  }
+  # Final result
+  res
 }  
