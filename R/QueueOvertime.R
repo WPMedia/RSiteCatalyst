@@ -95,7 +95,7 @@ QueueOvertime <- function(reportsuite.id, date.from, date.to, metrics,
 	  for (rs in reportsuite.id){
 	  print(paste('Making request for', rs))
 	  
-	  res <- append(res,list(QueueOvertime(reportsuite.id[1],date.from, date.to, metrics,
+	  res <- append(res,list(QueueOvertime(rs,date.from, date.to, metrics,
 date.granularity, segment.id,segments, segment.inline, anomaly.detection,
 data.current, expedite,interval.seconds,max.attempts,validate)))
 	  }
