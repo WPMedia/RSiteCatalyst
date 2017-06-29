@@ -1,22 +1,22 @@
-#' @details The QueueRanked function returns a data frame equivalent to pulling 
+#' @details The QueueRanked function returns a data frame equivalent to pulling
 #' a Ranked report in Adobe Reports & Analytics. Correlations & Sub-Relations are
 #' supported.
-#' 
-#' Because of the Reporting API structure, this function first requests the 
+#'
+#' Because of the Reporting API structure, this function first requests the
 #' report, then checks the reporting queue to see if the report is completed, and
-#' when the report returns as "done" pulls the report from the API. This checking 
+#' when the report returns as "done" pulls the report from the API. This checking
 #' process will occur up to the specified number of times (default 120), with a
 #' delay between status checks (default 5 seconds). If the report does not return
 #' as "done" after the number of tries have completed, the function will return an
 #' error message.
-#' 
-#' Note: Because of the multiple argument types ("top" and "start" OR "selected"), 
+#'
+#' Note: Because of the multiple argument types ("top" and "start" OR "selected"),
 #' keyword arguments are generally needed towards the end of the function call instead
 #' of just positional arguments.
 #'
-#' @description A QueueRanked report is a report that shows the ranking of values for 
+#' @description A QueueRanked report is a report that shows the ranking of values for
 #' one or more elements relative to a metric, aggregated over the time period selected.
-#' 
+#'
 #' @title Run a Ranked Report
 #'
 #' @param reportsuite.id Report suite id
@@ -31,38 +31,62 @@
 #' @param search List of keywords for the first specified element - e.g. c("contact","about","shop").
 #' search overrides anything specified using selected
 #' @param search.type String specifying the search type: 'and', or, 'or' 'not' (defaults to 'or')
-#' @param segment.id Id of Adobe Analytics segment to retrieve the report for
+#' @param segment.id Id(s) of Adobe Analytics segment to retrieve the report for
 #' @param segment.inline Inline segment definition
 #' @param classification SAINT classification to use in place of first element. Need to specify element AND classification.
 #' @param data.current TRUE or FALSE - whether to include current data for reports that include today's date
 #' @param expedite Set to TRUE to expedite the processing of this report
 #' @param interval.seconds How long to wait between attempts
 #' @param max.attempts Number of API attempts before stopping
-#' @param validate Weather to submit report definition for validation before requesting the data.
+#' @param validate whether to submit report definition for validation before requesting the data.
+#' @param enqueueOnly only enqueue the report, don't get the data. returns report id, which you can later use to get the data
 #'
 #' @importFrom jsonlite toJSON unbox
 #' @importFrom plyr rbind.fill
 #'
 #' @return Data frame
-#' 
+#'
 #' @examples
 #' \dontrun{
-#' 
-#' ranked1 <- QueueRanked("your_report_suite", 
-#'                        date.from = "2014-04-01", 
-#'                        date.to = "2014-04-20", 
-#'                        metrics = "pageviews", 
-#'                        elements = c("sitesection", "page") 
+#'
+#' ranked1 <- QueueRanked("your_report_suite",
+#'                        date.from = "2014-04-01",
+#'                        date.to = "2014-04-20",
+#'                        metrics = "pageviews",
+#'                        elements = c("sitesection", "page")
 #'                        )
-#' 
+#'                        
+#'  ranked2 <- QueueRanked(
+#'                        reportsuite.id = your_report_suite, 
+#'                        date.from = "2016-03-30", 
+#'                        date.to = "2016-03-30",
+#'                        metrics = "orders",
+#'                        elements = "product",
+#'                        classification = "Product Group"
+#'                        )
+#'  enqueued.report.id <- QueueRanked(
+#'                        reportsuite.id = your_report_suite, 
+#'                        date.from = "2016-03-30", 
+#'                        date.to = "2016-03-30",
+#'                        metrics = "orders",
+#'                        elements = "product",
+#'                        classification = "Product Group",
+#'                        enqueueOnly = TRUE
+#'                        )
 #' }
 #'
 #' @export
 
 QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
+<<<<<<< HEAD
                         top=0,start=0,selected=c(), search=c(),search.type='or',
                         segment.id='', segments=NULL, segment.inline='', classification=c(),data.current=FALSE, 
                         expedite=FALSE,interval.seconds=5,max.attempts=120,validate=TRUE) {
+=======
+                        top=10,start=1,selected=c(), search=c(),search.type='or',
+                        segment.id='', segment.inline='', classification=c(),data.current=FALSE,
+                        expedite=FALSE,interval.seconds=5,max.attempts=120,validate=TRUE,enqueueOnly=FALSE) {
+>>>>>>> randyzwitch/master
 
 
   # build JSON description
@@ -73,16 +97,28 @@ QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
   report.description$reportDescription$dateFrom <- unbox(date.from)
   report.description$reportDescription$dateTo <- unbox(date.to)
   report.description$reportDescription$reportSuiteID <- unbox(reportsuite.id)
+
+  #Hack in locale, every method calls ApiRequest so this hopefully works
+  #Set encoding to utf-8 as well; if someone wanted to do base64 they are out of luck
+  report.description$reportDescription$locale <- unbox(AdobeAnalytics$SC.Credentials$locale)
+  report.description$reportDescription$elementDataEncoding <- unbox("utf8")
+
   if(segment.inline!="") {
     report.description$reportDescription$segments <- list(segment.inline)
   }
-  if(start>0) { 
-    report.description$reportDescription$startingWith <- unbox(start) 
+  if(start>0) {
+    report.description$reportDescription$startingWith <- unbox(start)
   }
-  if(segment.id!="") { 
-    report.description$reportDescription$segment_id <- unbox(segment.id) 
-  }
-  if(expedite==TRUE) { 
+  #If segment is null, apply the standard segment unbox function
+    if(as.list(segment.id)[1]==''){
+    report.description$reportDescription$segment_id <- unbox(segment.id)
+      }
+  #If segment is not null, treat it like a list of metrics.
+    else{
+    report.description$reportDescription$segments <- data.frame( id = segment.id)
+
+    }
+  if(expedite==TRUE) {
     report.description$reportDescription$expedite <- unbox(expedite)
   }
   if(! is.null(segments)){
@@ -99,16 +135,16 @@ QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
 
     # we only put selected, search, top and startingWith for the first element
     if(i==1){
-      firstTop <- 
-      working.element <- list(id = unbox(element), 
-                              top = unbox(top[1]), 
+      firstTop <-
+      working.element <- list(id = unbox(element),
+                              top = unbox(top[1]),
                               startingWith = unbox(start))
 
       if(length(selected)!=0){
         working.element[["selected"]] <- selected
       }
       if(length(search)!=0){
-        working.element[["search"]] <- list(type = unbox(search.type), 
+        working.element[["search"]] <- list(type = unbox(search.type),
                                             keywords = search)
       }
 
@@ -134,8 +170,8 @@ QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
   }
   report.description$reportDescription$elements <- elements.formatted
 
-  report.data <- SubmitJsonQueueReport(toJSON(report.description),interval.seconds=interval.seconds,max.attempts=max.attempts,validate=validate)
+  report.data <- SubmitJsonQueueReport(toJSON(report.description),interval.seconds=interval.seconds,max.attempts=max.attempts,validate=validate,enqueueOnly=enqueueOnly)
 
-  return(report.data) 
+  return(report.data)
 
-}  
+}

@@ -37,17 +37,39 @@ ParseRanked <- function(report.data) {
     # We need to work our way down the nested data structure
     formatted.df <- BuildInnerBreakdownsRecursively(data,elements,metrics,1,c())
   }
-  
-  #Get segment 
+
+  #Get segment
   seg <- report.data$report$segments
+<<<<<<< HEAD
   
   #If segment null, don't add it in
   if(is.null(seg)){
     return(formatted.df)
   } else {
     seg = data.frame(toString(do.call(paste, c(seg['id'], sep="&"))),toString(do.call(paste, c(seg['name'], sep="&"))))
+=======
+
+  #If segment null, make a dummy data frame
+    if(is.null(seg)){
+      seg <- data.frame(list("", ""))
+      names(seg) <- c("segment.id", "segment.name")
+    }
+
+  #If segment has values, concatenate all values with "AND".  R puts the
+  #concatenated values in every single row, so I dedupe the dataframe
+    else{
+>>>>>>> randyzwitch/master
     names(seg) <- c("segment.id", "segment.name")
-    return(cbind(formatted.df, seg, row.names = NULL))
-  }
+    seg$segment.name<-(paste(as.list(seg$segment.name),collapse=" AND "))
+    seg$segment.id<-(paste(as.list(seg$segment.id),collapse=" AND "))
+
+    seg<-subset(seg,!duplicated(seg$segment.name))}
+
+    #Put segment after dates
+    if(nrow(formatted.df) > 0){
+      formatted.df <- cbind(formatted.df, seg, row.names = NULL)
+    }
+
+    return(formatted.df)
 
 }

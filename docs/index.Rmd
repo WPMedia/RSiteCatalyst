@@ -1,0 +1,919 @@
+---
+title: "RSiteCatalyst"
+output: 
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: false
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+cacheflag = TRUE
+```
+
+RSiteCatalyst is an R package for accessing the Adobe Analytics API. The focus of this package are analysts looking for a convenient, programmatic way for accessing their website data using the power of R.
+
+---
+
+## **Getting Started**
+### Installation
+RSiteCatalyst can be installed from CRAN as follows:
+```r
+install.packages("RSiteCatalyst", type = "source")
+```
+
+After installing RSiteCatalyst, you need to have <u>Web Services Access</u> enabled in the `User Management -> Users -> Access` menu in the Adobe Analytics Admin panel:
+
+![](./images/web-services-access.png)
+
+Additionally, you will either need to obtain your Web Services Credentials or register an OAuth2 application, which will be discussed in detail in the Authentication section.
+
+---
+
+### Authentication
+
+Regardless of whether you choose the 'legacy' method for authentication or the newer OAuth2 method, the API will return the same data. Which method you choose depends on your company security requirements, familiarity with OAuth2 or your application-specific details.
+
+#### Legacy (WSSE) [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/authentication-1/using-web-service-credentials-2) {.toc-ignore}
+
+The 'legacy' method of authenticating with the Adobe Analytics API requires knowing your <u>User Name</u> and <u>Shared Secret</u>, which can be obtained from the same `User Management -> Users -> Access` menu in the Admin panel where Web Services Access is granted.
+
+With the <u>User Name</u> and <u>Shared Secret</u> values, you can start the authentication process in RSiteCatalyst through the `SCAuth()` function:
+
+```{r, eval=FALSE}
+library(RSiteCatalyst)
+SCAuth("username:company", "cd1d234dee56e8202da6f7d3213eb1ef")
+```
+```
+## [1] "Credentials Saved in RSiteCatalyst Namespace."
+```
+
+Note that when the `SCAuth()` function is submitted, RSiteCatalyst doesn't actually validate whether the credentials are correct (i.e. verify that the API will return an answer), other than to validate the the `key` and `secret` values have the proper format.
+
+When submitting an API request, should your credentials not be accepted by the Adobe Analytics API, you will see the following message (or similar):
+```{r, eval = FALSE}
+library(RSiteCatalyst)
+SCAuth("username:company", "cd1d234dee56e8202da6f7d3213eb1ef")
+```
+```
+## [1] "Credentials Saved in RSiteCatalyst Namespace."
+```
+```{r, eval = FALSE}
+GetReportSuites()
+```
+```
+## Error in ApiRequest(func.name = "Company.GetReportSuites") : 
+##  ERROR: Bad Request  -  Unable to validate authentication.
+```
+
+#### OAuth2 [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/authentication-1/auth-overview-1#concept_4646CEC9CE5E4698A936D84B90A2CD0C) {.toc-ignore}
+
+TBD
+
+--- 
+
+### Tips and Tricks
+
+#### 1. Saving credentials to .Renviron {.toc-ignore}
+
+While not secure _per se_, to avoid putting your User Name and Shared Secret in the clear inside of an R script, you can place your credentials in the [.Renviron](https://stat.ethz.ch/R-manual/R-devel/library/base/html/Startup.html) environment file. This file is loaded each time R is loaded, setting global environment variables.
+
+```{r, eval = FALSE}
+USER="username:company"
+SECRET="cd1d234dee56e8202da6f7d3213eb1ef"
+```
+
+Again, this is not truly 'secure', it is just security-through-obscurity. If you use this method, your `SCAuth()` call now becomes the following:
+
+```{r, cache=FALSE}
+library(RSiteCatalyst)
+SCAuth(Sys.getenv("USER"), Sys.getenv("SECRET"))
+```
+
+Not enough to stop a truly determined hacker, but enough so that credentials aren't checked into version control or copy-pasted/shared across
+users.
+
+#### 2. Running GetReportSuites() at the beginning of a session {.toc-ignore}
+
+One of the best use cases of RSiteCatalyst is accessing large amounts of data, whether that means running reports for a long time period or for many report suites at one time.
+
+By running `GetReportSuites()` at the beginning of a session, not only do you get a quick refresher of the report suites contained in your Adobe Analytics, but you have a vector that you can pass to other RSiteCatalyst functions:
+
+```{r, cache=cacheflag}
+rs <- GetReportSuites()
+rs
+```
+
+```{r, eval=FALSE}
+# Pass the list of report suite ids, not the whole data frame
+props <- GetProps(rs$rsid)
+```
+
+---
+
+## **Contributing**
+
+RSiteCatalyst is a community-driven, open-source effort, not an official package from Adobe. As such, bug fixes and improvements rely on a vibrant community of users and developers contributing their free time and resources.
+
+### Issues {.toc-ignore}
+
+If you encounter a bug when using RSiteCatalyst, please use the [Issues](https://github.com/randyzwitch/RSiteCatalyst/issues) section of the [RSiteCatalyst GitHub repository](https://github.com/randyzwitch/RSiteCatalyst/) to report your issue. When reporting an issue, please include as much information as possible, preferably a reproducible code example. The following information is also valuable for troubleshooting:
+
+    * R version
+    * Operating System and Version
+    * RSiteCatalyst version (please upgrade to newest version on CRAN before reporting a bug)
+    * Environment (RStudio, R command line, cron, etc.)
+
+While [CRAN](https://cran.r-project.org/) requires a valid email address for package submission, personalized help via the maintainer email address is not feasible and will not receive a response.
+
+### Feature Requests {.toc-ignore}
+
+While RSiteCatalyst has near feature parity with the Adobe Analytics API Explorer on an _analytics/data retrieval_ basis, this package intentionally does not provide lower-level features such as creating or deleting report suites, uploading SAINT classifications or other 'development' type features. While these types of features _may_ be accepted into the package with a pull request of sufficient breadth and quality, they will not be a focus of the core developers.
+
+If there is analytics functionality desired that is currently available in the Adobe Analytics API but not in RSiteCatalyst, please create an [issue](https://github.com/randyzwitch/RSiteCatalyst/issues) on the [RSiteCatalyst GitHub repository](https://github.com/randyzwitch/RSiteCatalyst/), linking to the appropriate section of the Adobe Analytics API documentation. An explanation of your business goals and expected business value will go a long way towards convincing a volunteer to add the functionality.
+
+### Submiting A Pull Request {.toc-ignore}
+
+Of course, if you'd like to have a feature added AND submit a pull request to [RSiteCatalyst GitHub repository](https://github.com/randyzwitch/RSiteCatalyst/), the likelihood of seeing the feature added increases dramatically!
+
+RSiteCatalyst is provided under the [MIT License](https://tldrlegal.com/license/mit-license). Before contributing, please be sure you agree with the terms of the MIT license. All contributions merged into RSiteCatalyst become part of the MIT-licensed package whole; contributions with different license terms desired will not be accepted.
+
+### Contributors {.toc-ignore}
+
++----------------------------+----------------------------------+
+| Contributor                |                                  |
++============================+==================================+
+| Randy Zwitch               | [GitHub](https://github.com/randyzwitch)   [LinkedIn](https://www.linkedin.com/in/randyzwitch)   [Twitter](https://twitter.com/randyzwitch)          |
++----------------------------+----------------------------------+
+| Willem Paling              | [GitHub](https://github.com/WillemPaling)   [LinkedIn](https://au.linkedin.com/in/willempaling)   [Twitter](https://twitter.com/WillemPaling)          |
++----------------------------+----------------------------------+
+| Jowanza Joseph             | [GitHub](https://github.com/josep2)   [LinkedIn](https://www.linkedin.com/in/jowanza)   [Twitter](https://twitter.com/Jowanza)          |
++----------------------------+----------------------------------+
+| Adam Gitzes                | [GitHub](https://github.com/Gitzman)   [LinkedIn](https://www.linkedin.com/in/adam-gitzes-958aa122)   [Twitter](https://twitter.com/FootballActuary)          |
++----------------------------+----------------------------------+
+| Shashi Khatri              | [GitHub](https://github.com/mrshashi)   LinkedIn   Twitter          |
++----------------------------+----------------------------------+
+| Diego Villuendas Pellicero | [GitHub](https://github.com/dieguico)   LinkedIn   [Twitter](https://twitter.com/dieguico)          |
++----------------------------+----------------------------------+
+| Jason Morgan               | [GitHub](https://github.com/framingeinstein)   LinkedIn   Twitter          |
++----------------------------+----------------------------------+
+| Johann De Boer               | [GitHub](https://github.com/jdeboer)   LinkedIn   [Twitter](https://twitter.com/johannux)          |
++----------------------------+----------------------------------+
+
+### Release Notes {.toc-ignore}
+
+- [1.4.10](http://randyzwitch.com/rsitecatalyst-version-1-4-10-release-notes/)
+- [1.4.9](http://randyzwitch.com/rsitecatalyst-bulk-download-version-1-4-9-release-notes/)
+- [1.4.8](http://randyzwitch.com/rsitecatalyst-version-1-4-8-release-notes/)
+- [1.4.7/1.4.6](http://randyzwitch.com/rsitecatalyst-version-1-4-7-release-notes/)
+- [1.4.5](http://randyzwitch.com/rsitecatalyst-version-1-4-5-release-notes/)
+- [1.4.4](http://randyzwitch.com/rsitecatalyst-version-1-4-4-release-notes/)
+- [1.4.3](http://randyzwitch.com/rsitecatalyst-version-1-4-3-release-notes/)
+- [1.4.2](http://randyzwitch.com/rsitecatalyst-version-1-4-2-release-notes/)
+- [1.4.1](http://randyzwitch.com/rsitecatalyst-version-1-4-1-release-notes/)
+- [1.4](http://randyzwitch.com/rsitecatalyst-version-1-4-release-notes/)
+- [1.3](http://randyzwitch.com/rsitecatalyst-version-1-3-release-notes/)
+- [1.2](http://randyzwitch.com/rsitecatalyst-version-1-2-release-notes/)
+- [1.1](http://randyzwitch.com/rsitecatalyst-version-1-1-release-notes/)
+
+---
+
+## **Examples**
+
+The following examples are blog posts and examples written by members of the community. No validation has been performed that the code examples contained within work for current and all future versions of RSiteCatalyst; coordinate with the author of the post should you find out-of-date code.
+
+#### Business Analytics {.toc-ignore}
+
+* [Market Basket Analysis With Adobe Analytics And RSiteCatalyst](http://33sticks.com/rsitecatalyst-market-basket-analysis-adobe-analytics/)
+* [Date Based Cohort Analysis for Adobe SiteCatalyst using R](http://chrisnart.blogspot.com/2014/03/date-based-cohort-analysis-for-adobe.html)
+* [Clustering Search Keywords Using K-Means Clustering](http://randyzwitch.com/rsitecatalyst-k-means-clustering/)
+* [Anomaly Detection Using The Adobe Analytics API](http://randyzwitch.com/anomaly-detection-adobe-analytics-api/)
+* [What are the impacts of taking the site down right now?](http://whatdothedatasay.com/2017/01/16/analytics-impacts-of-taking-site-down/)
+* [Retrieving Adobe SiteCatalyst data with R](https://dabblingwithdata.wordpress.com/2017/01/05/retrieving-adobe-sitecatalyst-data-with-r/)
+* [Data Mining on Web Analytics Data](http://rpubs.com/rohitgossain/data-mining-web-analytics)
+
+#### Implementation / Automation {.toc-ignore}
+* [Adobe Sitecatalyst API and R: how to integrate reports with the SAINT classification file](http://analyticsblog.mecglobal.it/en/analytics-tools/adobe-sitecatalyst-api-in-r/)
+* [AUTOMATING YOUR LIFE WITH ADOBE ANALYTICS API DATA AND R](http://www.cardinalpath.com/automating-your-life-with-adobe-analytics-api-data-and-r/)
+* [Calling RSiteCatalyst From Python](http://randyzwitch.com/rsitecatalyst-adobe-analytics-python/)
+* [Real-time Reporting with the Adobe Analytics API](http://randyzwitch.com/real-time-reporting-adobe-analytics-api/)
+* [Bulk Downloading Adobe Analytics Data](http://randyzwitch.com/rsitecatalyst-bulk-download-version-1-4-9-release-notes/)
+* [Adobe Analytics Implementation Documentation in 60 Seconds](http://randyzwitch.com/adobe-analytics-implementation-documentation/)
+* [HOW TO RUN RSITECATALYST USING JUPYTER MAGICS](http://maassmedia.com/r-site-catalyst-python.php)
+* [RSiteCatalyst o cómo conectar R con SiteCatalyst de Adobe](http://www.madridgeekgirls.es/rsitecatalyst-o-como-conectar-r-con-sitecatalyst-de-adobe/)
+* [Self-Service Adobe Analytics Data Feeds!](http://randyzwitch.com/adobe-clickstream-data-feed-self-service-admin-panel/)
+
+#### Visualization {.toc-ignore}
+
+* [Visualizing Website Structure With Network Graphs](http://randyzwitch.com/rsitecatalyst-d3-network-graphs/)
+* [Visualizing Website Pathing With Sankey Charts](http://randyzwitch.com/rsitecatalyst-website-pathing-sankey-charts/)
+* [SO, R WE READY FOR R WITH ADOBE ANALYTICS?](http://analyticsdemystified.com/analysis/so-r-we-ready-for-r-with-adobe/)
+* [Real-Time Reporting Adobe Analytics API Tutorial](http://www.ryanpraski.com/real-time-reporting-adobe-analytics-api-tutorial/)
+* [R AND ADOBE ANALYTICS: TWO DIMENSIONS, MANY METRICS – PART 1 OF 3](http://analyticsdemystified.com/adobe-analytics/r-adobe-analytics-two-dimensions-many-metrics-part-1-3)
+
+#### General {.toc-ignore}
+
+* [Playing the Hits at Summit 2014: Filtered Metrics, Error Monitoring, and More](https://blogs.adobe.com/digitalmarketing/analytics/playing-hits-summit-2014-filtered-metrics-error-monitoring/)
+* [Dartistics - The Adobe Analytics API](http://www.dartistics.com/api-adobe-analytics.html)
+* [Transforming a Museum to be data-driven using R ](https://earlconf.com/london/download/?id=cxp1j)
+
+---
+
+## **Admin / Metadata Functions** [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/admin-api)
+
+With a few exceptions, most of the Admin/Metadata functions take a report suite or a list of report suites as arguments and return the settings for a given report. These settings will mostly correspond with what administrators can see in the Adobe Analytics interface.
+
+#### CancelReport [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-cancel)
+
+Cancels a previously submitted report request, and removes it from the processing queue.
+
+```{r, eval=FALSE}
+CancelReport(12345678)
+```
+
+#### GetActivation [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getactivation-1)
+
+Retrieves the activation status for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetActivation(rs$rsid)
+```
+
+#### GetAxleStartDate [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getaxlestartdate)
+
+Retrieves the date a report suite was migrated from SiteCatalyst 14 to axle processing (version 15).
+
+```{r, cache=cacheflag}
+GetAxleStartDate(rs$rsid)
+```
+
+#### GetBaseCurrency [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getbasecurrency-1)
+
+Retrieves a list of supported currency codes for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetBaseCurrency(rs$rsid)
+```
+
+#### GetBaseURL [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getbaseurl-1)
+
+Retrieves the base URL assigned to each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetBaseURL(rs$rsid)
+```
+
+#### GetBookmarks [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getbookmarks-1)
+
+Retrieves a list of bookmarks for the authenticated user.
+Parameters folder_limit and folder_offset are optional, and only necessary if the total bookmark count exceeds 500, which is the limit. Use them to select a certain range of folders out of the entire set.
+
+```{r, cache=cacheflag}
+GetBookmarks()
+```
+
+#### GetCalculatedMetrics [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getcalculatedmetrics-1)
+
+Retrieves the calculated metrics assigned to each of the specified report suites.
+
+```{r, cache=cacheflag}
+gcm <- GetCalculatedMetrics(rs$rsid)
+head(gcm)
+```
+
+#### GetClassifications [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getclassifications-1)
+
+Retrieves a list of classifications (associated with the specified element) for each of the specified report suites.
+
+```{r, cache=cacheflag}
+gcl <- GetClassifications(rs$rsid)
+head(gcl)
+```
+
+#### GetClickMapReporting [<span class="glyphicon glyphicon-link"</span>]()
+
+```{r, cache=cacheflag}
+gcmr <- GetClickMapReporting(rs$rsid)
+head(gcmr)
+```
+
+#### GetCustomCalendar [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getcustomcalendar-1)
+
+Retrieves the custom calendar for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetCustomCalendar(rs$rsid)
+```
+
+#### GetDashboards [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getdashboards-1)
+
+Retrieves all the dashboards for the authenticated web services user, with bookmarks included.
+Parameters dashboard_limit and dashboard_offset are optional, and only necessary if the total bookmark count exceeds 500, which is the limit. Use them to select a certain range of bookmarks out of the entire set.
+
+```{r, cache=cacheflag}
+gdb <- GetDashboards()
+head(gdb)
+```
+
+#### GetDataWarehouseDisplay [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getdatawarehousedisplay)
+
+Returns if data warehouse is enabled for the requested report suites.
+
+```{r, cache=cacheflag}
+GetDataWarehouseDisplay(rs$rsid)
+```
+
+#### GetDefaultPage [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getdefaultpage-1)
+
+Retrieves the default page for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetDefaultPage(rs$rsid)
+```
+
+#### GetDiscoverEnabled [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getdiscoverenabled)
+
+Returns whether ad hoc analysis (formerly Discover) is enabled for the requested report suites.
+
+```{r, cache=cacheflag}
+GetDiscoverEnabled(rs$rsid)
+```
+
+#### GetEcommerce [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getecommerce-1)
+
+Retrieves the commerce level for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetEcommerce(rs$rsid)
+```
+
+#### GetElements [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-getelements)
+
+Retrieves a list of possible valid elements for a report.
+
+```{r, cache=cacheflag}
+elem <- GetElements(rs$rsid)
+head(elem)
+```
+
+#### GetEvars [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getevars-1)
+
+Retrieves the commerce variables for each of the specified report suites.
+
+```{r, cache=cacheflag}
+evar <- GetEvars(rs$rsid)
+head(evar)
+```
+
+#### GetFeed [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/data-feeds/r-getfeed)
+
+Gets configuration details for a specific feed, including feed status, FTP delivery location, and the data columns that are included in the feed.
+
+```{r, eval=FALSE}
+feed <- GetFeed(1111111)
+head(feed)
+```
+```
+##     feed_id      rsid                    name interval   timezone status
+## 1   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 2   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 3   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 4   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 5   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 6   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+
+##                  ftp_host ftp_path             fields
+## 1   ftp.somewhere.com        /        accept_language
+## 2   ftp.somewhere.com        /                browser
+## 3   ftp.somewhere.com        /        connection_type
+## 4   ftp.somewhere.com        /                country
+## 5   ftp.somewhere.com        /              date_time
+## 6   ftp.somewhere.com        /                 domain
+```
+
+#### GetFeeds [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/data-feeds/r-getfeeds)
+
+Returns a list of data feeds for the specified report suites, including delivery status.
+
+```{r, eval=FALSE}
+GetFeeds(rs$rsid)
+```
+```
+##  feed_id      rsid interval   timezone                    name
+## 1 1111111 zwitchdev    daily US/Eastern RSiteCatalyst Data Feed
+##               ftp_host ftp_path
+## 1 ftp.somewhere.com        /
+##                                                       activity
+## 1 29786961, 2016-09-15 04:00:00, 2016-09-16 04:00:00, delivered
+```
+
+#### GetFunctions [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/segments-1-4/calculated-metrics)
+
+```{r, cache=cacheflag}
+gf <- GetFunctions()
+head(gf)
+```
+
+#### GetGeoSegmentation [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getgeosegmentation)
+
+Retrieves the geography segmentation for the requested report suites.
+
+```{r, cache=cacheflag}
+GetGeoSegmentation(rs$rsid)
+```
+
+#### GetGroups [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getgroups-1)
+
+Retrieves a list of a company's permission groups.
+
+```{r, cache=cacheflag}
+gg <- GetGroups()
+head(gg)
+```
+
+#### GetInternalURLFilters [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getinternalurlfilters-1)
+
+Retrieves the internal URL filters for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetInternalURLFilters(rs$rsid)
+```
+
+#### GetIPAddressExclusions [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getipaddressexclusions-1)
+
+Returns a list of IP addresses excluded from website tracking for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetIPAddressExclusions(rs$rsid)
+```
+
+#### GetIPObfuscation [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getipobfuscation-1)
+
+Retrieves the IP Address Obfuscation setting for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetIPObfuscation(rs$rsid)
+```
+
+#### GetKeyVisitors [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getkeyvisitors-1)
+
+Retrieves a list of key visitors for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetKeyVisitors(rs$rsid)
+```
+
+#### GetListVariables [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getlistvariables-1)
+
+Retrieves the list variables for the requested report suites.
+
+```{r, cache=cacheflag}
+GetListVariables(rs$rsid)
+```
+
+#### GetLocalization [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getlocalization-1)
+
+Retrieves the localization (multi-byte character) settings for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetLocalization(rs$rsid)
+```
+
+#### GetLogin [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getlogin-1)
+
+Retrieves information about the specified user account.
+
+```{r, eval=FALSE}
+GetLogin("rzwitch")
+```
+```
+##    login first_name last_name title             email phone_number
+## 1 me      Randy    Zwitch       me@example.com   1111111111
+##  is_admin must_change_password is_temp temp_start_date temp_end_date
+## 1     TRUE                FALSE   FALSE                              
+##                                                                                                                                                                                         group_names
+## 1 All Report Access,Ad Hoc Analysis License Users,Report Builder,Web Service Access,All Report Access,Discover License Users,Current Data Users,Reports & Analytics Access,Analysis Workspace Access
+```
+
+#### GetMarketingChannelExpiration [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getmarketingchannelexpiration-1)
+
+Returns the currently defined Marketing Channel expiration dates for the specified report suites.
+
+```{r, cache=cacheflag}
+GetMarketingChannelExpiration(rs$rsid)
+```
+
+#### GetMarketingChannelRules [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getmarketingchannelrules-1)
+
+Returns the currently defined Marketing Channel rules for the specified report suites.
+
+```{r, cache=cacheflag}
+gmcrs <- GetMarketingChannelRules("zwitchdev")
+head(gmcrs)
+```
+
+#### GetMarketingChannels [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getmarketingchannels-1)
+
+Returns the currently defined Marketing Channels for the specified report suites.
+
+```{r, cache=cacheflag}
+gmc <- GetMarketingChannels(rs$rsid)
+head(gmc)
+```
+
+#### GetMetrics [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-getmetrics)
+
+Retrieves a list of possible valid elements for a report.
+
+```{r, cache=cacheflag}
+metrics <- GetMetrics(rs$rsid)
+head(metrics)
+```
+
+#### GetMobileAppReporting [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getmobileappreporting)
+
+Retrieves the Mobile Application Tracking settings for the requested report suites.
+
+```{r, cache=cacheflag}
+GetMobileAppReporting(rs$rsid)
+```
+
+#### GetPaidSearchDetection [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getpaidsearchdetection)
+
+Retrieves the paid search settings for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetPaidSearchDetection(rs$rsid)
+```
+
+#### GetPermanentTraffic [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getpermanenttraffic-1)
+
+Retrieves the permanent traffic settings for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetPermanentTraffic(rs$rsid)
+```
+
+#### GetPreviousServerCalls [<span class="glyphicon glyphicon-link"</span>]()
+
+```{r, cache=cacheflag}
+GetPreviousServerCalls(rs$rsid)
+```
+
+#### GetPrivacySettings [<span class="glyphicon glyphicon-link"</span>]()
+
+```{r, cache=cacheflag}
+GetPrivacySettings(rs$rsid)
+```
+
+#### GetProps [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getprops)
+
+Retrieves the props (traffic variables) for the specified report suites.
+
+```{r, cache=cacheflag}
+props <- GetProps(rs$rsid)
+head(props)
+```
+
+#### GetQueue [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-getqueue-2)
+
+Returns a list of reports in a company's report queue.
+
+```{r, cache=cacheflag}
+GetQueue()
+```
+
+#### GetRealTimeReport [<span class="glyphicon glyphicon-link"</span>]()
+
+'source' parameter present and set to 'realtime'. Note that Real-Time reports do not have to be queued, they can run immediately using Report.Run.
+
+```{r, cache=cacheflag}
+GetRealTimeReport("zwitchdev", "instances")
+```
+
+#### GetRealTimeSettings [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getrealtimesettings)
+
+Returns the metrics that are configured to provide real time data.
+
+```{r, cache=cacheflag}
+GetRealTimeSettings("zwitchdev")
+```
+
+#### GetReportDescription [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getreportdescription)
+
+Retrieves the name, associated report type, and report description for the supplied bookmark ID. This report description can then be used to retrieve report data via the Report API. An error is returned for unsupported bookmark types.
+
+```{r, cache=cacheflag}
+GetReportDescription("15625765")
+```
+
+#### GetReportSuiteGroups [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getreportsuitegroups-1)
+
+Retrieves a list of permission groups assigned to the specified report suite.
+
+```{r, cache=cacheflag}
+GetReportSuiteGroups("zwitchdev")
+```
+
+#### GetReportSuites [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getreportsuites-1)
+
+Retrieves all report suites associated with the requesting company.
+
+```{r, cache=cacheflag}
+GetReportSuites()
+```
+
+#### GetScheduledSpike [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getscheduledspike-1)
+
+Retrieves the scheduled traffic increase settings for the specified report suites.
+
+```{r, cache=cacheflag}
+GetScheduledSpike(rs$rsid)
+```
+
+#### GetSegments [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getsegments-1)
+
+Retrieves the segments that are available in one or more report suites.
+
+```{r, cache=cacheflag}
+segments <- GetSegments(rs$rsid)
+head(segments)
+```
+
+#### GetSiteTitle [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getsitetitle-1)
+
+Retrieves the site title (friendly name) for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetSiteTitle(rs$rsid)
+```
+
+#### GetSuccessEvents [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getevents)
+
+Retrieves the success events for each of the specified report suites.
+
+```{r, cache=cacheflag}
+events <- GetSuccessEvents(rs$rsid)
+head(events)
+```
+
+#### GetTemplate [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettemplate-2)
+
+Retrieves the creation template for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetTemplate(rs$rsid)
+```
+
+#### GetTimeStampEnabled [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettimezone-1)
+
+```{r, cache=cacheflag}
+GetTimeStampEnabled(c("zwitchdev", "zwitchjulia"))
+```
+
+#### GetTimeZone [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettimezone-1)
+
+Retrieves the Time Zone setting for each of the specified report suites.
+
+```{r, cache=cacheflag}
+GetTimeZone(rs$rsid)
+```
+
+#### GetTrackingServer [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettrackingserver-1)
+
+Returns the tracking server and namespace for the specified report suite. Only accepts a single report suite, as all report suites within an account will have same tracking server.
+
+```{r, cache=cacheflag}
+GetTrackingServer("zwitchdev")
+```
+
+#### GetTransactionEnabled [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettransactionenabled)
+
+Retrieves the transaction ids storage enable for the requested report suites.
+
+```{r, cache=cacheflag}
+GetTransactionEnabled(rs$rsid)
+```
+
+#### GetUniqueVisitorVariable [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getuniquevisitorvariable-1)
+
+Retrieves the unique visitor variable setting for the specified report suites.
+
+```{r, cache=cacheflag}
+GetUniqueVisitorVariable(rs$rsid)
+```
+
+#### GetVersionAccess [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getversionaccess)
+
+Retrieves version access for the company of the authenticated user.
+
+```{r, cache=cacheflag}
+GetVersionAccess()
+```
+
+#### GetVideoSettings [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getvideosettings)
+
+Retrieves video measurement settings.
+
+```{r, cache=cacheflag}
+GetVideoSettings(rs$rsid)
+```
+
+#### GetVirtualReportSuiteSettings [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getvirtualreportsuitesettings)
+
+Get definition of virtual report suite (parent report suite and segments applied)
+
+```{r, cache=cacheflag}
+GetVirtualReportSuiteSettings("vrs_zwitch0_vrs1")
+```
+
+#### ViewProcessingRules [<span class="glyphicon glyphicon-link"</span>]()
+
+List processing rules for a report suite, along with behaviors that define the rule.
+
+```{r, cache=cacheflag}
+#No processing rules defined
+ViewProcessingRules("zwitchdev")
+```
+
+---
+
+## **Analytics Functions** [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/get-started)
+
+The functions in this section represent the types of information a user can retrieve from the Adobe Analytics UI. However, in most cases, the API via RSiteCatalyst can retrieve more data than is displayed in the web interface.
+
+Note that because of the extensive number of keyword arguments for each function, it's not feasible to show examples of all functionality. Please see the [Examples](/#examples) section above or the detailed documentation within the RSiteCatalyst R manual.
+
+#### BuildClassificationValueSegment [<span class="glyphicon glyphicon-link"</span>]()
+
+Used for creating inline segments for use in Queue* functions. This is a convenience function to create the proper formatting for the required JSON object, it does not call the API itself.
+
+```{r, eval=FALSE}
+vistor_segment <- BuildClassificationValueSegment(element,
+                                                  search.keywords,
+                                                  classification,
+                                                  search.type)
+```
+
+#### BuildRealTimeReportStructure
+
+Selects the metrics and elements (dimensions) on which you want Real-Time reports enabled. This is a convenience function to create the proper formatting for the required JSON object, it does not call the API itself.
+
+Use the returned list from this function as argument(s) in SaveRealTimeSettings.
+
+```{r, eval=FALSE}
+report.test1 <- BuildRealTimeReportStructure(report.name="test123",
+               metric="instances",
+               elements = c("prop2", "searchenginekeyword", "geocountry"))
+
+report.test2 <- BuildRealTimeReportStructure(report.name="test456",
+               metric="instances",
+               elements = c("prop2", "searchenginekeyword", "geocountry"),
+               min.granularity = "5")
+
+report.test3 <- BuildRealTimeReportStructure(report.name="test789",
+               metric="instances",
+               elements = c("prop2", "searchenginekeyword", "geocountry"),
+               min.granularity = "5",
+               ui.report=FALSE)
+```
+
+#### GetReport [<span class="glyphicon glyphicon-link"</span>]()
+
+```{r, cache=cacheflag}
+#TBD
+```
+
+#### GetReportsByIds [<span class="glyphicon glyphicon-link"</span>]()
+
+```{r, cache=cacheflag}
+#TBD
+```
+
+#### QueueDataWarehouse [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue)
+
+QueueDatawarehouse is a method that can both schedule Data Warehouse reports (like in the Adobe Analytics interface), as well as return reports back in the R interface as calculated by Data Warehouse (developmental). For the most part, users should pass the `enqueueOnly=TRUE` parameters with the `ftp` parameter to send reports to the FTP.
+
+API:
+```{r, cache=cacheflag}
+# Because report sent to FTP, returns the report.id value
+QueueDataWarehouse("zwitchdev",
+                    "2016-11-01",
+                    "2016-11-07",
+                    c("visits", "pageviews"),
+                    c("page"),
+                    enqueueOnly=TRUE,
+                    ftp = list(host = Sys.getenv("FTP", ""),
+                              port = "21",
+                              directory = "/DWtest/",
+                              username = Sys.getenv("FTPUSER", ""),
+                              password = Sys.getenv("FTPPW", ""),
+                              filename = "myreport.csv")
+  )
+```
+
+#### QueueFallout [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue)
+
+This method generates the underlying data for a Fallout/Pathing report within Adobe Analytics. The API method supports both visits and pageviews as metrics.
+
+Adobe Analytics Interface:
+![](./images/queuefallout.png)
+
+API: 
+```{r, cache=cacheflag}
+QueueFallout("zwitchdev",
+                   "2016-08-01",
+                   "2016-12-31",
+                   metric="visits",
+                   element="page",
+                   c("http://randyzwitch.com/r-amazon-ec2", "http://randyzwitch.com/julia-import-data"))
+```
+
+#### QueueOvertime [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue)
+
+This method is analogous to the "Key Metrics" report within Adobe Analytics. Note that the API method does not return the total row, just the metrics by the time breakdown.
+
+Adobe Analytics Interface:
+![](./images/queueovertime.png)
+
+API:
+```{r, cache=cacheflag}
+QueueOvertime("zwitchdev", "2016-09-07", "2016-09-13", "visits", date.granularity = "week")
+```
+
+#### QueuePathing [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue)
+
+QueuePathing is the API method that calculates the underlying data for NextPage, Fallout and other path-related reports within Adobe Analytics.
+
+Adobe Analytics Interface:
+![](./images/queuepathing.png)
+
+API:
+```{r, cache=cacheflag}
+pathpattern <- c("::anything::", "::anything::")
+QueuePathing("zwitchdev",
+            "2016-09-19",
+            "2016-09-19",
+            metric="pageviews",
+            element="page",
+            pathpattern,
+            top = 5)
+```
+
+#### QueueRanked [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue)
+
+QueueRanked represents the data from a ranked report within Adobe Analytics, where one or more elements is specified with no dateGranularity. Note that the API method does not return the total row, just the metrics by the breakdown(s) specified.
+
+Adobe Analytics Interface:
+![](./images/queueranked.png)
+
+```{r, cache=cacheflag}
+QueueRanked("zwitchdev", "2016-10-01", "2016-10-31", "pageviews", "page", top = 10)
+```
+
+#### QueueSummary [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue)
+
+QueueSummary does not map to an interface report per se; rather, QueueSummary provides the total calculation row for many reports within Adobe Analytics. It is this method that will provide 'unique` calculations such as visitors, which would be incorrectly summed across an element such as page views.
+
+```{r, cache=cacheflag}
+QueueSummary(rs$rsid, "2016-09-01", "visits")
+```
+
+#### QueueTrended [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue)
+
+QueueTrended is similar to a QueueOvertime report, except instead of just having a metric by time granularity, you can specify an element to trend. One notable feature for the API method is that it removes the restriction of five element values to be trended over time (i.e. Top 5 pages over time)
+
+Adobe Analytics Interface:
+![](./images/queuetrended.png)
+
+API:
+```{r, cache=cacheflag}
+QueueTrended("zwitchdev", "2016-09-07", "2016-09-13", "visits", "page", selected = c("http://randyzwitch.com"))
+```
+
+#### SaveRealTimeSettings [<span class="glyphicon glyphicon-link"</span>](https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-saverealtimesettings)
+
+Selects the metrics and elements (dimensions) on which you want real time reports enabled.
+Realtime configuration changes take 15 minutes to be reflected in reports.
+
+WARNING: This function allows you to change the settings in your Adobe Analytics UI for all users, so be sure this is what you want to do. Additionally, submitting this function with only one report will mean other reports are deleted, you're NOT just changing a single report.
+
+```{r, eval=FALSE}
+SaveRealTimeSettings(reportsuite.ids = "", report1 = list(),
+  report2 = list(), report3 = list())
+```
+
+#### SCAuth
+
+```{r, eval=FALSE}
+SCAuth("username:company", "cd1d234dee56e8202da6f7d3213eb1ef")
+```
+
+#### SubmitJsonQueueReport
+
+A function for advanced users, for the case where a user feels that submitting a JSON request to the Report.Queue API endpoint would be easier than using one of the pre-defined functions from RSiteCatalyst.
+
+```{r, eval=FALSE}
+report <- SubmitJsonQueueReport("valid JSON string")
+```

@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>RSiteCatalyst</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-1.1/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="css/rmarkdown.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3,h4",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">RSiteCatalyst</h1>
+
+</div>
+
+
+<p>RSiteCatalyst is an R package for accessing the Adobe Analytics API. The focus of this package are analysts looking for a convenient, programmatic way for accessing their website data using the power of R.</p>
+<hr />
+<div id="getting-started" class="section level2">
+<h2><strong>Getting Started</strong></h2>
+<div id="installation" class="section level3">
+<h3>Installation</h3>
+<p>RSiteCatalyst can be installed from CRAN as follows:</p>
+<pre class="r"><code>install.packages(&quot;RSiteCatalyst&quot;, type = &quot;source&quot;)</code></pre>
+<p>After installing RSiteCatalyst, you need to have <u>Web Services Access</u> enabled in the <code>User Management -&gt; Users -&gt; Access</code> menu in the Adobe Analytics Admin panel:</p>
+<div class="figure">
+<img src="images/web-services-access.png" />
+
+</div>
+<p>Additionally, you will either need to obtain your Web Services Credentials or register an OAuth2 application, which will be discussed in detail in the Authentication section.</p>
+<hr />
+</div>
+<div id="authentication" class="section level3">
+<h3>Authentication</h3>
+<p>Regardless of whether you choose the ‘legacy’ method for authentication or the newer OAuth2 method, the API will return the same data. Which method you choose depends on your company security requirements, familiarity with OAuth2 or your application-specific details.</p>
+<div id="legacy-wsse" class="section level4 toc-ignore">
+<h4>Legacy (WSSE) <a href="https://marketing.adobe.com/developer/documentation/authentication-1/using-web-service-credentials-2"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>The ‘legacy’ method of authenticating with the Adobe Analytics API requires knowing your <u>User Name</u> and <u>Shared Secret</u>, which can be obtained from the same <code>User Management -&gt; Users -&gt; Access</code> menu in the Admin panel where Web Services Access is granted.</p>
+<p>With the <u>User Name</u> and <u>Shared Secret</u> values, you can start the authentication process in RSiteCatalyst through the <code>SCAuth()</code> function:</p>
+<pre class="r"><code>library(RSiteCatalyst)
+SCAuth(&quot;username:company&quot;, &quot;cd1d234dee56e8202da6f7d3213eb1ef&quot;)</code></pre>
+<pre><code>## [1] &quot;Credentials Saved in RSiteCatalyst Namespace.&quot;</code></pre>
+<p>Note that when the <code>SCAuth()</code> function is submitted, RSiteCatalyst doesn’t actually validate whether the credentials are correct (i.e. verify that the API will return an answer), other than to validate the the <code>key</code> and <code>secret</code> values have the proper format.</p>
+<p>When submitting an API request, should your credentials not be accepted by the Adobe Analytics API, you will see the following message (or similar):</p>
+<pre class="r"><code>library(RSiteCatalyst)
+SCAuth(&quot;username:company&quot;, &quot;cd1d234dee56e8202da6f7d3213eb1ef&quot;)</code></pre>
+<pre><code>## [1] &quot;Credentials Saved in RSiteCatalyst Namespace.&quot;</code></pre>
+<pre class="r"><code>GetReportSuites()</code></pre>
+<pre><code>## Error in ApiRequest(func.name = &quot;Company.GetReportSuites&quot;) : 
+##  ERROR: Bad Request  -  Unable to validate authentication.</code></pre>
+</div>
+<div id="oauth2" class="section level4 toc-ignore">
+<h4>OAuth2 <a href="https://marketing.adobe.com/developer/documentation/authentication-1/auth-overview-1#concept_4646CEC9CE5E4698A936D84B90A2CD0C"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>TBD</p>
+<hr />
+</div>
+</div>
+<div id="tips-and-tricks" class="section level3">
+<h3>Tips and Tricks</h3>
+<div id="saving-credentials-to-.renviron" class="section level4 toc-ignore">
+<h4>1. Saving credentials to .Renviron</h4>
+<p>While not secure <em>per se</em>, to avoid putting your User Name and Shared Secret in the clear inside of an R script, you can place your credentials in the <a href="https://stat.ethz.ch/R-manual/R-devel/library/base/html/Startup.html">.Renviron</a> environment file. This file is loaded each time R is loaded, setting global environment variables.</p>
+<pre class="r"><code>USER=&quot;username:company&quot;
+SECRET=&quot;cd1d234dee56e8202da6f7d3213eb1ef&quot;</code></pre>
+<p>Again, this is not truly ‘secure’, it is just security-through-obscurity. If you use this method, your <code>SCAuth()</code> call now becomes the following:</p>
+<pre class="r"><code>library(RSiteCatalyst)
+SCAuth(Sys.getenv(&quot;USER&quot;), Sys.getenv(&quot;SECRET&quot;))</code></pre>
+<pre><code>## [1] &quot;Credentials Saved in RSiteCatalyst Namespace.&quot;</code></pre>
+<p>Not enough to stop a truly determined hacker, but enough so that credentials aren’t checked into version control or copy-pasted/shared across users.</p>
+</div>
+<div id="running-getreportsuites-at-the-beginning-of-a-session" class="section level4 toc-ignore">
+<h4>2. Running GetReportSuites() at the beginning of a session</h4>
+<p>One of the best use cases of RSiteCatalyst is accessing large amounts of data, whether that means running reports for a long time period or for many report suites at one time.</p>
+<p>By running <code>GetReportSuites()</code> at the beginning of a session, not only do you get a quick refresher of the report suites contained in your Adobe Analytics, but you have a vector that you can pass to other RSiteCatalyst functions:</p>
+<pre class="r"><code>rs &lt;- GetReportSuites()
+rs</code></pre>
+<pre><code>##          rsid     site_title
+## 1   zwitchdev ZwitchCorp Dev
+## 2 zwitchjulia Julia Bloggers</code></pre>
+<pre class="r"><code># Pass the list of report suite ids, not the whole data frame
+props &lt;- GetProps(rs$rsid)</code></pre>
+<hr />
+</div>
+</div>
+</div>
+<div id="contributing" class="section level2">
+<h2><strong>Contributing</strong></h2>
+<p>RSiteCatalyst is a community-driven, open-source effort, not an official package from Adobe. As such, bug fixes and improvements rely on a vibrant community of users and developers contributing their free time and resources.</p>
+<div id="issues" class="section level3 toc-ignore">
+<h3>Issues</h3>
+<p>If you encounter a bug when using RSiteCatalyst, please use the <a href="https://github.com/randyzwitch/RSiteCatalyst/issues">Issues</a> section of the <a href="https://github.com/randyzwitch/RSiteCatalyst/">RSiteCatalyst GitHub repository</a> to report your issue. When reporting an issue, please include as much information as possible, preferably a reproducible code example. The following information is also valuable for troubleshooting:</p>
+<pre><code>* R version
+* Operating System and Version
+* RSiteCatalyst version (please upgrade to newest version on CRAN before reporting a bug)
+* Environment (RStudio, R command line, cron, etc.)</code></pre>
+<p>While <a href="https://cran.r-project.org/">CRAN</a> requires a valid email address for package submission, personalized help via the maintainer email address is not feasible and will not receive a response.</p>
+</div>
+<div id="feature-requests" class="section level3 toc-ignore">
+<h3>Feature Requests</h3>
+<p>While RSiteCatalyst has near feature parity with the Adobe Analytics API Explorer on an <em>analytics/data retrieval</em> basis, this package intentionally does not provide lower-level features such as creating or deleting report suites, uploading SAINT classifications or other ‘development’ type features. While these types of features <em>may</em> be accepted into the package with a pull request of sufficient breadth and quality, they will not be a focus of the core developers.</p>
+<p>If there is analytics functionality desired that is currently available in the Adobe Analytics API but not in RSiteCatalyst, please create an <a href="https://github.com/randyzwitch/RSiteCatalyst/issues">issue</a> on the <a href="https://github.com/randyzwitch/RSiteCatalyst/">RSiteCatalyst GitHub repository</a>, linking to the appropriate section of the Adobe Analytics API documentation. An explanation of your business goals and expected business value will go a long way towards convincing a volunteer to add the functionality.</p>
+</div>
+<div id="submiting-a-pull-request" class="section level3 toc-ignore">
+<h3>Submiting A Pull Request</h3>
+<p>Of course, if you’d like to have a feature added AND submit a pull request to <a href="https://github.com/randyzwitch/RSiteCatalyst/">RSiteCatalyst GitHub repository</a>, the likelihood of seeing the feature added increases dramatically!</p>
+<p>RSiteCatalyst is provided under the <a href="https://tldrlegal.com/license/mit-license">MIT License</a>. Before contributing, please be sure you agree with the terms of the MIT license. All contributions merged into RSiteCatalyst become part of the MIT-licensed package whole; contributions with different license terms desired will not be accepted.</p>
+</div>
+<div id="contributors" class="section level3 toc-ignore">
+<h3>Contributors</h3>
+<table style="width:89%;">
+<colgroup>
+<col width="40%" />
+<col width="48%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Contributor</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><p>Randy Zwitch</p></td>
+<td><p><a href="https://github.com/randyzwitch">GitHub</a> <a href="https://www.linkedin.com/in/randyzwitch">LinkedIn</a> <a href="https://twitter.com/randyzwitch">Twitter</a></p></td>
+</tr>
+<tr class="even">
+<td><p>Willem Paling</p></td>
+<td><p><a href="https://github.com/WillemPaling">GitHub</a> <a href="https://au.linkedin.com/in/willempaling">LinkedIn</a> <a href="https://twitter.com/WillemPaling">Twitter</a></p></td>
+</tr>
+<tr class="odd">
+<td><p>Jowanza Joseph</p></td>
+<td><p><a href="https://github.com/josep2">GitHub</a> <a href="https://www.linkedin.com/in/jowanza">LinkedIn</a> <a href="https://twitter.com/Jowanza">Twitter</a></p></td>
+</tr>
+<tr class="even">
+<td><p>Adam Gitzes</p></td>
+<td><p><a href="https://github.com/Gitzman">GitHub</a> <a href="https://www.linkedin.com/in/adam-gitzes-958aa122">LinkedIn</a> <a href="https://twitter.com/FootballActuary">Twitter</a></p></td>
+</tr>
+<tr class="odd">
+<td><p>Shashi Khatri</p></td>
+<td><p><a href="https://github.com/mrshashi">GitHub</a> LinkedIn Twitter</p></td>
+</tr>
+<tr class="even">
+<td><p>Diego Villuendas Pellicero</p></td>
+<td><p><a href="https://github.com/dieguico">GitHub</a> LinkedIn <a href="https://twitter.com/dieguico">Twitter</a></p></td>
+</tr>
+<tr class="odd">
+<td><p>Jason Morgan</p></td>
+<td><p><a href="https://github.com/framingeinstein">GitHub</a> LinkedIn Twitter</p></td>
+</tr>
+<tr class="even">
+<td><p>Johann De Boer</p></td>
+<td><div style="white-space: pre-line;"><a href="https://github.com/jdeboer">GitHub</a> LinkedIn <a href="https://twitter.com/johannux">Twitter</a></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="release-notes" class="section level3 toc-ignore">
+<h3>Release Notes</h3>
+<ul>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-10-release-notes/">1.4.10</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-bulk-download-version-1-4-9-release-notes/">1.4.9</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-8-release-notes/">1.4.8</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-7-release-notes/">1.4.7/1.4.6</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-5-release-notes/">1.4.5</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-4-release-notes/">1.4.4</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-3-release-notes/">1.4.3</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-2-release-notes/">1.4.2</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-1-release-notes/">1.4.1</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-4-release-notes/">1.4</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-3-release-notes/">1.3</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-2-release-notes/">1.2</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-version-1-1-release-notes/">1.1</a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="examples" class="section level2">
+<h2><strong>Examples</strong></h2>
+<p>The following examples are blog posts and examples written by members of the community. No validation has been performed that the code examples contained within work for current and all future versions of RSiteCatalyst; coordinate with the author of the post should you find out-of-date code.</p>
+<div id="business-analytics" class="section level4 toc-ignore">
+<h4>Business Analytics</h4>
+<ul>
+<li><a href="http://33sticks.com/rsitecatalyst-market-basket-analysis-adobe-analytics/">Market Basket Analysis With Adobe Analytics And RSiteCatalyst</a></li>
+<li><a href="http://chrisnart.blogspot.com/2014/03/date-based-cohort-analysis-for-adobe.html">Date Based Cohort Analysis for Adobe SiteCatalyst using R</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-k-means-clustering/">Clustering Search Keywords Using K-Means Clustering</a></li>
+<li><a href="http://randyzwitch.com/anomaly-detection-adobe-analytics-api/">Anomaly Detection Using The Adobe Analytics API</a></li>
+<li><a href="http://whatdothedatasay.com/2017/01/16/analytics-impacts-of-taking-site-down/">What are the impacts of taking the site down right now?</a></li>
+<li><a href="https://dabblingwithdata.wordpress.com/2017/01/05/retrieving-adobe-sitecatalyst-data-with-r/">Retrieving Adobe SiteCatalyst data with R</a></li>
+<li><a href="http://rpubs.com/rohitgossain/data-mining-web-analytics">Data Mining on Web Analytics Data</a></li>
+</ul>
+</div>
+<div id="implementation-automation" class="section level4 toc-ignore">
+<h4>Implementation / Automation</h4>
+<ul>
+<li><a href="http://analyticsblog.mecglobal.it/en/analytics-tools/adobe-sitecatalyst-api-in-r/">Adobe Sitecatalyst API and R: how to integrate reports with the SAINT classification file</a></li>
+<li><a href="http://www.cardinalpath.com/automating-your-life-with-adobe-analytics-api-data-and-r/">AUTOMATING YOUR LIFE WITH ADOBE ANALYTICS API DATA AND R</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-adobe-analytics-python/">Calling RSiteCatalyst From Python</a></li>
+<li><a href="http://randyzwitch.com/real-time-reporting-adobe-analytics-api/">Real-time Reporting with the Adobe Analytics API</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-bulk-download-version-1-4-9-release-notes/">Bulk Downloading Adobe Analytics Data</a></li>
+<li><a href="http://randyzwitch.com/adobe-analytics-implementation-documentation/">Adobe Analytics Implementation Documentation in 60 Seconds</a></li>
+<li><a href="http://maassmedia.com/r-site-catalyst-python.php">HOW TO RUN RSITECATALYST USING JUPYTER MAGICS</a></li>
+<li><a href="http://www.madridgeekgirls.es/rsitecatalyst-o-como-conectar-r-con-sitecatalyst-de-adobe/">RSiteCatalyst o cómo conectar R con SiteCatalyst de Adobe</a></li>
+<li><a href="http://randyzwitch.com/adobe-clickstream-data-feed-self-service-admin-panel/">Self-Service Adobe Analytics Data Feeds!</a></li>
+</ul>
+</div>
+<div id="visualization" class="section level4 toc-ignore">
+<h4>Visualization</h4>
+<ul>
+<li><a href="http://randyzwitch.com/rsitecatalyst-d3-network-graphs/">Visualizing Website Structure With Network Graphs</a></li>
+<li><a href="http://randyzwitch.com/rsitecatalyst-website-pathing-sankey-charts/">Visualizing Website Pathing With Sankey Charts</a></li>
+<li><a href="http://analyticsdemystified.com/analysis/so-r-we-ready-for-r-with-adobe/">SO, R WE READY FOR R WITH ADOBE ANALYTICS?</a></li>
+<li><a href="http://www.ryanpraski.com/real-time-reporting-adobe-analytics-api-tutorial/">Real-Time Reporting Adobe Analytics API Tutorial</a></li>
+<li><a href="http://analyticsdemystified.com/adobe-analytics/r-adobe-analytics-two-dimensions-many-metrics-part-1-3">R AND ADOBE ANALYTICS: TWO DIMENSIONS, MANY METRICS – PART 1 OF 3</a></li>
+</ul>
+</div>
+<div id="general" class="section level4 toc-ignore">
+<h4>General</h4>
+<ul>
+<li><a href="https://blogs.adobe.com/digitalmarketing/analytics/playing-hits-summit-2014-filtered-metrics-error-monitoring/">Playing the Hits at Summit 2014: Filtered Metrics, Error Monitoring, and More</a></li>
+<li><a href="http://www.dartistics.com/api-adobe-analytics.html">Dartistics - The Adobe Analytics API</a></li>
+<li><a href="https://earlconf.com/london/download/?id=cxp1j">Transforming a Museum to be data-driven using R</a></li>
+</ul>
+<hr />
+</div>
+</div>
+<div id="admin-metadata-functions" class="section level2">
+<h2><strong>Admin / Metadata Functions</strong> <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/admin-api"><span class="glyphicon glyphicon-link"</span></a></h2>
+<p>With a few exceptions, most of the Admin/Metadata functions take a report suite or a list of report suites as arguments and return the settings for a given report. These settings will mostly correspond with what administrators can see in the Adobe Analytics interface.</p>
+<div id="cancelreport" class="section level4">
+<h4>CancelReport <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-cancel"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Cancels a previously submitted report request, and removes it from the processing queue.</p>
+<pre class="r"><code>CancelReport(12345678)</code></pre>
+</div>
+<div id="getactivation" class="section level4">
+<h4>GetActivation <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getactivation-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the activation status for each of the specified report suites.</p>
+<pre class="r"><code>GetActivation(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title activation
+## 1   zwitchdev ZwitchCorp Dev       TRUE
+## 2 zwitchjulia Julia Bloggers       TRUE</code></pre>
+</div>
+<div id="getaxlestartdate" class="section level4">
+<h4>GetAxleStartDate <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getaxlestartdate"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the date a report suite was migrated from SiteCatalyst 14 to axle processing (version 15).</p>
+<pre class="r"><code>GetAxleStartDate(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title axle_start_date
+## 1   zwitchdev ZwitchCorp Dev      2014-02-20
+## 2 zwitchjulia Julia Bloggers      2015-01-10</code></pre>
+</div>
+<div id="getbasecurrency" class="section level4">
+<h4>GetBaseCurrency <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getbasecurrency-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves a list of supported currency codes for each of the specified report suites.</p>
+<pre class="r"><code>GetBaseCurrency(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title base_currency
+## 1   zwitchdev ZwitchCorp Dev           USD
+## 2 zwitchjulia Julia Bloggers           USD</code></pre>
+</div>
+<div id="getbaseurl" class="section level4">
+<h4>GetBaseURL <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getbaseurl-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the base URL assigned to each of the specified report suites.</p>
+<pre class="r"><code>GetBaseURL(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title                     base_url
+## 1   zwitchdev ZwitchCorp Dev   http://www.randyzwitch.com
+## 2 zwitchjulia Julia Bloggers http://www.juliabloggers.com</code></pre>
+</div>
+<div id="getbookmarks" class="section level4">
+<h4>GetBookmarks <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getbookmarks-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves a list of bookmarks for the authenticated user. Parameters folder_limit and folder_offset are optional, and only necessary if the total bookmark count exceeds 500, which is the limit. Use them to select a certain range of folders out of the entire set.</p>
+<pre class="r"><code>GetBookmarks()</code></pre>
+<pre><code>##      folder_name folder_id   owner bookmark_name bookmark_id      rsid
+## 1     TestFolder   2444942 rzwitch  TestBookmark    28473595 zwitchdev
+## 2 Another Folder   2444946 rzwitch         Test2    28473698 zwitchdev</code></pre>
+</div>
+<div id="getcalculatedmetrics" class="section level4">
+<h4>GetCalculatedMetrics <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getcalculatedmetrics-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the calculated metrics assigned to each of the specified report suites.</p>
+<pre class="r"><code>gcm &lt;- GetCalculatedMetrics(rs$rsid)
+head(gcm)</code></pre>
+<pre><code>##          rsid     site_title formula_name         formula friendly_formula
+## 1   zwitchdev ZwitchCorp Dev PV Per Visit [10] / [visits]  [10] / [Visits]
+## 2 zwitchjulia Julia Bloggers PV Per Visit [10] / [visits]  [10] / [Visits]
+##   decimal_places formula_id    type
+## 1              0  f:1089420 numeric
+## 2              0  f:1091439 numeric</code></pre>
+</div>
+<div id="getclassifications" class="section level4">
+<h4>GetClassifications <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getclassifications-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves a list of classifications (associated with the specified element) for each of the specified report suites.</p>
+<pre class="r"><code>gcl &lt;- GetClassifications(rs$rsid)
+head(gcl)</code></pre>
+<pre><code>##        rsid     site_title                id                  element_name
+## 1 zwitchdev ZwitchCorp Dev              page                          Page
+## 2 zwitchdev ZwitchCorp Dev      trackingcode                 Tracking Code
+## 3 zwitchdev ZwitchCorp Dev      trackingcode                 Tracking Code
+## 4 zwitchdev ZwitchCorp Dev firsttouchchannel First Touch Marketing Channel
+## 5 zwitchdev ZwitchCorp Dev firsttouchchannel First Touch Marketing Channel
+## 6 zwitchdev ZwitchCorp Dev  lasttouchchannel  Last Touch Marketing Channel
+##   classification_name                 description             type
+## 1          JuliaPages Pages with Julia in the URL             text
+## 2   Creative Elements                                         text
+## 3           Campaigns                                         text
+## 4    First Touch Cost                             numeric_currency
+## 5  First Touch Budget                             numeric_currency
+## 6     Last Touch Cost                             numeric_currency
+##   date_enabled      metric_id
+## 1        FALSE           &lt;NA&gt;
+## 2        FALSE           &lt;NA&gt;
+## 3         TRUE           &lt;NA&gt;
+## 4           NA div_mult_1_221
+## 5           NA div_mult_3_221
+## 6           NA div_mult_2_223</code></pre>
+</div>
+<div id="getclickmapreporting" class="section level4">
+<h4>GetClickMapReporting <a href=""><span class="glyphicon glyphicon-link"</span></a></h4>
+<pre class="r"><code>gcmr &lt;- GetClickMapReporting(rs$rsid)
+head(gcmr)</code></pre>
+<pre><code>##        rsid allow_configuration all_clickmap_enabled
+## 1 zwitchdev                TRUE                FALSE
+## 2 zwitchdev                TRUE                FALSE
+## 3 zwitchdev                TRUE                FALSE
+## 4 zwitchdev                TRUE                FALSE
+## 5 zwitchdev                TRUE                FALSE
+## 6 zwitchdev                TRUE                FALSE
+##   clickmap_v3_download_enabled selected_metric can_upgrade_30_to_31 id
+## 1                        FALSE               6                FALSE  1
+## 2                        FALSE               6                FALSE  2
+## 3                        FALSE               6                FALSE  3
+## 4                        FALSE               6                FALSE  4
+## 5                        FALSE               6                FALSE  5
+## 6                        FALSE               6                FALSE  6
+##       metric
+## 1    Revenue
+## 2     Orders
+## 3      Units
+## 4      Carts
+## 5 Cart Views
+## 6     Clicks</code></pre>
+</div>
+<div id="getcustomcalendar" class="section level4">
+<h4>GetCustomCalendar <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getcustomcalendar-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the custom calendar for each of the specified report suites.</p>
+<pre class="r"><code>GetCustomCalendar(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title calendar_type
+## 1   zwitchdev ZwitchCorp Dev     gregorian
+## 2 zwitchjulia Julia Bloggers     gregorian</code></pre>
+</div>
+<div id="getdashboards" class="section level4">
+<h4>GetDashboards <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getdashboards-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves all the dashboards for the authenticated web services user, with bookmarks included. Parameters dashboard_limit and dashboard_offset are optional, and only necessary if the total bookmark count exceeds 500, which is the limit. Use them to select a certain range of bookmarks out of the entire set.</p>
+<pre class="r"><code>gdb &lt;- GetDashboards()
+head(gdb)</code></pre>
+<pre><code>##            name     id   owner grid         .id          X1
+## 1 Site Overview 826576 rzwitch  3x2        name Key Metrics
+## 2 Site Overview 826576 rzwitch  3x2          id    15625769
+## 3 Site Overview 826576 rzwitch  3x2        rsid   zwitchdev
+## 4 Site Overview 826576 rzwitch  3x2 displayInfo        &lt;NA&gt;
+## 5 Site Overview 826576 rzwitch  3x2 displayInfo        &lt;NA&gt;
+## 6 Site Overview 826576 rzwitch  3x2 displayInfo        &lt;NA&gt;
+##                         X2             X3                  X4        X5
+## 1 Bounce Rate on Top Pages Referrer Types Report Suite Totals Countries
+## 2                 15625767       15625770            15625771  15625768
+## 3                zwitchdev      zwitchdev           zwitchdev zwitchdev
+## 4                     &lt;NA&gt;           &lt;NA&gt;                &lt;NA&gt;      &lt;NA&gt;
+## 5                     &lt;NA&gt;           &lt;NA&gt;                &lt;NA&gt;      &lt;NA&gt;
+## 6                     &lt;NA&gt;           &lt;NA&gt;                &lt;NA&gt;      &lt;NA&gt;
+##                      X6  row  col rowspan colspan graph summary table
+## 1 Search Keywords - All &lt;NA&gt; &lt;NA&gt;      NA      NA  &lt;NA&gt;      NA  &lt;NA&gt;
+## 2              15625772 &lt;NA&gt; &lt;NA&gt;      NA      NA  &lt;NA&gt;      NA  &lt;NA&gt;
+## 3             zwitchdev &lt;NA&gt; &lt;NA&gt;      NA      NA  &lt;NA&gt;      NA  &lt;NA&gt;
+## 4                  &lt;NA&gt;    0    0       1       1  TRUE   FALSE  TRUE
+## 5                  &lt;NA&gt;    0    1       1       1 FALSE   FALSE  TRUE
+## 6                  &lt;NA&gt;    0    2       1       1  TRUE   FALSE  TRUE</code></pre>
+</div>
+<div id="getdatawarehousedisplay" class="section level4">
+<h4>GetDataWarehouseDisplay <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getdatawarehousedisplay"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns if data warehouse is enabled for the requested report suites.</p>
+<pre class="r"><code>GetDataWarehouseDisplay(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title data_warehouse_display
+## 1   zwitchdev ZwitchCorp Dev all-logins-have-access
+## 2 zwitchjulia Julia Bloggers all-logins-have-access</code></pre>
+</div>
+<div id="getdefaultpage" class="section level4">
+<h4>GetDefaultPage <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getdefaultpage-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the default page for each of the specified report suites.</p>
+<pre class="r"><code>GetDefaultPage(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title default_page
+## 1   zwitchdev ZwitchCorp Dev             
+## 2 zwitchjulia Julia Bloggers</code></pre>
+</div>
+<div id="getdiscoverenabled" class="section level4">
+<h4>GetDiscoverEnabled <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getdiscoverenabled"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns whether ad hoc analysis (formerly Discover) is enabled for the requested report suites.</p>
+<pre class="r"><code>GetDiscoverEnabled(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title discover_enabled
+## 1   zwitchdev ZwitchCorp Dev             TRUE
+## 2 zwitchjulia Julia Bloggers             TRUE</code></pre>
+</div>
+<div id="getecommerce" class="section level4">
+<h4>GetEcommerce <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getecommerce-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the commerce level for each of the specified report suites.</p>
+<pre class="r"><code>GetEcommerce(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title ecommerce
+## 1   zwitchdev ZwitchCorp Dev      TRUE
+## 2 zwitchjulia Julia Bloggers      TRUE</code></pre>
+</div>
+<div id="getelements" class="section level4">
+<h4>GetElements <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-getelements"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves a list of possible valid elements for a report.</p>
+<pre class="r"><code>elem &lt;- GetElements(rs$rsid)
+head(elem)</code></pre>
+<pre><code>##               id                name correlation subrelation
+## 1 accountsummary Report Suite Totals        TRUE       FALSE
+## 2       activity            Activity       FALSE        TRUE
+## 3        browser             Browser        TRUE        TRUE
+## 4  browserheight      Browser Height        TRUE       FALSE
+## 5    browsertype        Browser Type        TRUE        TRUE
+## 6   browserwidth       Browser Width        TRUE       FALSE
+##   max_pathing_steps      rsid
+## 1                NA zwitchdev
+## 2                NA zwitchdev
+## 3                NA zwitchdev
+## 4                NA zwitchdev
+## 5                NA zwitchdev
+## 6                NA zwitchdev</code></pre>
+</div>
+<div id="getevars" class="section level4">
+<h4>GetEvars <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getevars-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the commerce variables for each of the specified report suites.</p>
+<pre class="r"><code>evar &lt;- GetEvars(rs$rsid)
+head(evar)</code></pre>
+<pre><code>##                   name        type           id expiration_type
+## 1        Tracking Code text_string trackingcode            week
+## 2    Logged In (evar1) text_string        evar1           visit
+## 3 Visitor Type (evar2) text_string        evar2           visit
+## 4        Custom eVar 3 text_string        evar3           visit
+## 5        Custom eVar 4 text_string        evar4           visit
+## 6        Custom eVar 5 text_string        evar5           visit
+##   expiration_custom_days  allocation_type description enabled report_suite
+## 1                      1 most_recent_last        &lt;NA&gt;      NA    zwitchdev
+## 2                      1 most_recent_last                TRUE    zwitchdev
+## 3                      1 most_recent_last                TRUE    zwitchdev
+## 4                      1 most_recent_last                TRUE    zwitchdev
+## 5                      1 most_recent_last                TRUE    zwitchdev
+## 6                      1 most_recent_last                TRUE    zwitchdev</code></pre>
+</div>
+<div id="getfeed" class="section level4">
+<h4>GetFeed <a href="https://marketing.adobe.com/developer/documentation/data-feeds/r-getfeed"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Gets configuration details for a specific feed, including feed status, FTP delivery location, and the data columns that are included in the feed.</p>
+<pre class="r"><code>feed &lt;- GetFeed(1111111)
+head(feed)</code></pre>
+<pre><code>##     feed_id      rsid                    name interval   timezone status
+## 1   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 2   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 3   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 4   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 5   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+## 6   1111111 zwitchdev RSiteCatalyst Data Feed    daily US/Eastern Active
+
+##                  ftp_host ftp_path             fields
+## 1   ftp.somewhere.com        /        accept_language
+## 2   ftp.somewhere.com        /                browser
+## 3   ftp.somewhere.com        /        connection_type
+## 4   ftp.somewhere.com        /                country
+## 5   ftp.somewhere.com        /              date_time
+## 6   ftp.somewhere.com        /                 domain</code></pre>
+</div>
+<div id="getfeeds" class="section level4">
+<h4>GetFeeds <a href="https://marketing.adobe.com/developer/documentation/data-feeds/r-getfeeds"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns a list of data feeds for the specified report suites, including delivery status.</p>
+<pre class="r"><code>GetFeeds(rs$rsid)</code></pre>
+<pre><code>##  feed_id      rsid interval   timezone                    name
+## 1 1111111 zwitchdev    daily US/Eastern RSiteCatalyst Data Feed
+##               ftp_host ftp_path
+## 1 ftp.somewhere.com        /
+##                                                       activity
+## 1 29786961, 2016-09-15 04:00:00, 2016-09-16 04:00:00, delivered</code></pre>
+</div>
+<div id="getfunctions" class="section level4">
+<h4>GetFunctions <a href="https://marketing.adobe.com/developer/documentation/segments-1-4/calculated-metrics"><span class="glyphicon glyphicon-link"</span></a></h4>
+<pre class="r"><code>gf &lt;- GetFunctions()
+head(gf)</code></pre>
+<pre><code>##                       id                            name
+## 1                col-sum                      Column Sum
+## 2 ls-intercept-quadratic Quadratic regression: Intercept
+## 3                   sqrt                     Square Root
+## 4         ls-pred-linear  Linear regression: Predicted Y
+## 5                    exp                        Exponent
+## 6                     if                              If
+##                                                                                                                                                                  description
+## 1                                                                                                                                                                 Column Sum
+## 2                                                                                                                      Quadratic regression: Y = ( a + b X ) ^ 2, Returns a.
+## 3                                                                                                                                                                Square Root
+## 4                                                                                                                                 Linear regression: Y = a X + b. Returns Y.
+## 5                                                                                                                                                                   Exponent
+## 6 If the value of the condition parameter is non-zero (true), then the result will be the value of the then parameter. Otherwise it will be the value of the else parameter.
+##                required      optional example
+## 1               column1                  &lt;NA&gt;
+## 2                  x, y include-zeros    &lt;NA&gt;
+## 3               column1                  &lt;NA&gt;
+## 4                  x, y include-zeros    &lt;NA&gt;
+## 5               column1                  &lt;NA&gt;
+## 6 condition, then, else                  &lt;NA&gt;</code></pre>
+</div>
+<div id="getgeosegmentation" class="section level4">
+<h4>GetGeoSegmentation <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getgeosegmentation"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the geography segmentation for the requested report suites.</p>
+<pre class="r"><code>GetGeoSegmentation(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title geo_segmentation vista_enabled
+## 1   zwitchdev ZwitchCorp Dev             TRUE         FALSE
+## 2 zwitchjulia Julia Bloggers             TRUE         FALSE</code></pre>
+</div>
+<div id="getgroups" class="section level4">
+<h4>GetGroups <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getgroups-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves a list of a company’s permission groups.</p>
+<pre class="r"><code>gg &lt;- GetGroups()
+head(gg)</code></pre>
+<pre><code>##   group_id                    group_name
+## 1   191835           Activity Map Access
+## 2   191836 Ad Hoc Analysis License Users
+## 3   191843             All Report Access
+## 4   191841     Analysis Workspace Access
+## 5   191837            Current Data Users
+## 6   191838              Mobile App Admin
+##                                                                                                                                                                                                                                                                                                                                group_description
+## 1 NOTE: Activity Map is only available for Adobe Analytics Standard or Premium customers. Point product (SiteCatalyst) customers can add users to this group, but those users will not be able to download, install, or use Activity Map. Point product customers can continue to use the legacy ClickMap tool for visual, in-context analytics.
+## 2                                                                                                                                                                                                                                                                                                                      Access to Ad Hoc Analysis
+## 3                                                                                                                                                                        Access to all Report Suites, Dimensions, Metrics, Channel Reports, Anomaly Detection, Current Data, Analysis Workspace, My Recommended Reports and Dashboard Reportlets
+## 4                                                                                                                                                                                                                                                                                                                   Access to Analysis Workspace
+## 5                                                                                                                                                                                                                                                                                                             Access to the Current Data Reports
+## 6                                                                                                                                                                                                                                                                                                    Administrator Access to Adobe Mobile App UI</code></pre>
+</div>
+<div id="getinternalurlfilters" class="section level4">
+<h4>GetInternalURLFilters <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getinternalurlfilters-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the internal URL filters for each of the specified report suites.</p>
+<pre class="r"><code>GetInternalURLFilters(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title internal_url_filters
+## 1   zwitchdev ZwitchCorp Dev  www.randyzwitch.com
+## 2   zwitchdev ZwitchCorp Dev      randyzwitch.com
+## 3 zwitchjulia Julia Bloggers  www.randyzwitch.com
+## 4 zwitchjulia Julia Bloggers      randyzwitch.com</code></pre>
+</div>
+<div id="getipaddressexclusions" class="section level4">
+<h4>GetIPAddressExclusions <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getipaddressexclusions-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns a list of IP addresses excluded from website tracking for each of the specified report suites.</p>
+<pre class="r"><code>GetIPAddressExclusions(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title
+## 1   zwitchdev ZwitchCorp Dev
+## 2 zwitchjulia Julia Bloggers</code></pre>
+</div>
+<div id="getipobfuscation" class="section level4">
+<h4>GetIPObfuscation <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getipobfuscation-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the IP Address Obfuscation setting for each of the specified report suites.</p>
+<pre class="r"><code>GetIPObfuscation(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title ip_obfuscation
+## 1   zwitchdev ZwitchCorp Dev           none
+## 2 zwitchjulia Julia Bloggers           none</code></pre>
+</div>
+<div id="getkeyvisitors" class="section level4">
+<h4>GetKeyVisitors <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getkeyvisitors-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves a list of key visitors for each of the specified report suites.</p>
+<pre class="r"><code>GetKeyVisitors(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title key_visitors
+## 1   zwitchdev ZwitchCorp Dev             
+## 2 zwitchjulia Julia Bloggers</code></pre>
+</div>
+<div id="getlistvariables" class="section level4">
+<h4>GetListVariables <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getlistvariables-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the list variables for the requested report suites.</p>
+<pre class="r"><code>GetListVariables(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title            name allocation_type enabled
+## 1   zwitchdev ZwitchCorp Dev List Variable 1            full   FALSE
+## 2   zwitchdev ZwitchCorp Dev List Variable 2            full   FALSE
+## 3   zwitchdev ZwitchCorp Dev List Variable 3            full   FALSE
+## 4 zwitchjulia Julia Bloggers List Variable 1            full   FALSE
+## 5 zwitchjulia Julia Bloggers List Variable 2            full   FALSE
+## 6 zwitchjulia Julia Bloggers List Variable 3            full   FALSE
+##   value_delimiter max_values description id expiration_custom_days
+## 1               ,        250              1                      0
+## 2               ,        250              2                      0
+## 3               ,        250              3                      0
+## 4               ,        250              1                      0
+## 5               ,        250              2                      0
+## 6               ,        250              3                      0
+##   expiration_type
+## 1           never
+## 2           never
+## 3           never
+## 4           never
+## 5           never
+## 6           never</code></pre>
+</div>
+<div id="getlocalization" class="section level4">
+<h4>GetLocalization <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getlocalization-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the localization (multi-byte character) settings for each of the specified report suites.</p>
+<pre class="r"><code>GetLocalization(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title localization
+## 1   zwitchdev ZwitchCorp Dev         TRUE
+## 2 zwitchjulia Julia Bloggers         TRUE</code></pre>
+</div>
+<div id="getlogin" class="section level4">
+<h4>GetLogin <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getlogin-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves information about the specified user account.</p>
+<pre class="r"><code>GetLogin(&quot;rzwitch&quot;)</code></pre>
+<pre><code>##    login first_name last_name title             email phone_number
+## 1 me      Randy    Zwitch       me@example.com   1111111111
+##  is_admin must_change_password is_temp temp_start_date temp_end_date
+## 1     TRUE                FALSE   FALSE                              
+##                                                                                                                                                                                         group_names
+## 1 All Report Access,Ad Hoc Analysis License Users,Report Builder,Web Service Access,All Report Access,Discover License Users,Current Data Users,Reports &amp; Analytics Access,Analysis Workspace Access</code></pre>
+</div>
+<div id="getmarketingchannelexpiration" class="section level4">
+<h4>GetMarketingChannelExpiration <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getmarketingchannelexpiration-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns the currently defined Marketing Channel expiration dates for the specified report suites.</p>
+<pre class="r"><code>GetMarketingChannelExpiration(rs$rsid)</code></pre>
+<pre><code>##          rsid days
+## 1   zwitchdev   30
+## 2 zwitchjulia   30</code></pre>
+</div>
+<div id="getmarketingchannelrules" class="section level4">
+<h4>GetMarketingChannelRules <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getmarketingchannelrules-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns the currently defined Marketing Channel rules for the specified report suites.</p>
+<pre class="r"><code>gmcrs &lt;- GetMarketingChannelRules(&quot;zwitchdev&quot;)
+head(gmcrs)</code></pre>
+<pre><code>##        rsid ruleset_id channel_id junction                 type
+## 1 zwitchdev       3885          1      all search_tracking_code
+## 2 zwitchdev       3886          2      all search_tracking_code
+## 3 zwitchdev       3887          4      all        page_qs_param
+## 4 zwitchdev       3888          3      all        page_qs_param
+## 5 zwitchdev       3889          5      all     referring_domain
+## 6 zwitchdev       3890          8      all     referring_domain
+##   query_string_parameter rule_id             hit_attribute_type
+## 1                           5489                 is_paid_search
+## 2                           5490              is_natural_search
+## 3                  email    5491                  page_qs_param
+## 4                display    5492                  page_qs_param
+## 5                           5493      external_referring_domain
+## 6                           5494 external_referring_root_domain
+##   hit_attribute_query_string_parameter operator
+## 1                                        equals
+## 2                                        equals
+## 3                                email   exists
+## 4                              display   exists
+## 5                                      contains
+## 6                                        equals
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           matches
+## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   r-bloggers.com,badhessian.org
+## 6 facebook.com,linkedin.com,twitter.com,plus.google.com,orkut.com,friendster.com,livejournal.com,blogspot.com,wordpress.com,friendfeed.com,myspace.com,digg.com,reddit.com,stumbleupon.com,twine.com,yelp.com,mixx.com,delicious.com,tumblr.com,disqus.com,intensedebate.com,plurk.com,slideshare.net,backtype.com,netvibes.com,mister-wong.com,diigo.com,flixster.com,youtube.com,vimeo.com,12seconds.tv,zooomr.com,identi.ca,jaiku.com,flickr.com,imeem.com,dailymotion.com,photobucket.com,fotolog.com,smugmug.com,classmates.com,myyearbook.com,mylife.com,tagged.com,brightkite.com,ning.com,bebo.com,hi5.com,yuku.com,cafemom.com,xanga.com</code></pre>
+</div>
+<div id="getmarketingchannels" class="section level4">
+<h4>GetMarketingChannels <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getmarketingchannels-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns the currently defined Marketing Channels for the specified report suites.</p>
+<pre class="r"><code>gmc &lt;- GetMarketingChannels(rs$rsid)
+head(gmc)</code></pre>
+<pre><code>##        rsid           name   type  color channel_id enabled
+## 1 zwitchdev    Paid Search online 0F59A9          1    TRUE
+## 2 zwitchdev Natural Search online E07804          2    TRUE
+## 3 zwitchdev        Display online 609D09          3    TRUE
+## 4 zwitchdev          Email online D12112          4    TRUE
+## 5 zwitchdev      Affiliate online 813AA7          5    TRUE
+## 6 zwitchdev         Direct online 056F73          6    TRUE
+##   channel_breakdown override_last_touch_channel
+## 1                 0                       FALSE
+## 2                 0                       FALSE
+## 3                 0                       FALSE
+## 4                 0                       FALSE
+## 5                 0                       FALSE
+## 6                 0                        TRUE</code></pre>
+</div>
+<div id="getmetrics" class="section level4">
+<h4>GetMetrics <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-getmetrics"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves a list of possible valid elements for a report.</p>
+<pre class="r"><code>metrics &lt;- GetMetrics(rs$rsid)
+head(metrics)</code></pre>
+<pre><code>##                       id                       name   type decimals
+## 1    activityconversions       Activity Conversions number        0
+## 2    activityimpressions       Activity Impressions number        0
+## 3       averagepagedepth         Average Page Depth number        0
+## 4 averagetimespentonpage Average Time Spent on Page   time        1
+## 5 averagetimespentonsite Average Time Spent on Site   time        1
+## 6      averagevisitdepth        Average Visit Depth number        0
+##   formula      rsid
+## 1    &lt;NA&gt; zwitchdev
+## 2    &lt;NA&gt; zwitchdev
+## 3    &lt;NA&gt; zwitchdev
+## 4    &lt;NA&gt; zwitchdev
+## 5    &lt;NA&gt; zwitchdev
+## 6    &lt;NA&gt; zwitchdev</code></pre>
+</div>
+<div id="getmobileappreporting" class="section level4">
+<h4>GetMobileAppReporting <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getmobileappreporting"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the Mobile Application Tracking settings for the requested report suites.</p>
+<pre class="r"><code>GetMobileAppReporting(rs$rsid)</code></pre>
+<pre><code>##   allow_configuration all_lifecycle_enabled all_messaging_v1_enabled
+## 1                TRUE                 FALSE                    FALSE
+##   all_messaging_v2_enabled all_messaging_v3_enabled all_appstore_enabled
+## 1                    FALSE                    FALSE                FALSE
+##   all_location_enabled lifecycle_version align_visits_enabled
+## 1                FALSE                 0                    0
+##   deeplink_enabled places_enabled all_messaging_core_enabled
+## 1            FALSE          FALSE                      FALSE</code></pre>
+</div>
+<div id="getpaidsearchdetection" class="section level4">
+<h4>GetPaidSearchDetection <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getpaidsearchdetection"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the paid search settings for each of the specified report suites.</p>
+<pre class="r"><code>GetPaidSearchDetection(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title search_engine query_string operator
+## 1   zwitchdev ZwitchCorp Dev       ::any::           ps contains
+## 2 zwitchjulia Julia Bloggers       ::any::           ps contains</code></pre>
+</div>
+<div id="getpermanenttraffic" class="section level4">
+<h4>GetPermanentTraffic <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getpermanenttraffic-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the permanent traffic settings for each of the specified report suites.</p>
+<pre class="r"><code>GetPermanentTraffic(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title submit_date   login start_date hits_per_day
+## 1   zwitchdev ZwitchCorp Dev  2015-01-12 rzwitch 2015-01-19          600
+## 2 zwitchjulia Julia Bloggers  2015-01-10 rzwitch 2015-01-11          300</code></pre>
+</div>
+<div id="getpreviousservercalls" class="section level4">
+<h4>GetPreviousServerCalls <a href=""><span class="glyphicon glyphicon-link"</span></a></h4>
+<pre class="r"><code>GetPreviousServerCalls(rs$rsid)</code></pre>
+<pre><code>##          rsid average_server_calls peak_day_server_calls_date
+## 1   zwitchdev         0.0000000000                 1969-12-31
+## 2 zwitchjulia         0.0000000000                 1969-12-31
+##   peak_day_server_calls
+## 1                     0
+## 2                     0</code></pre>
+</div>
+<div id="getprivacysettings" class="section level4">
+<h4>GetPrivacySettings <a href=""><span class="glyphicon glyphicon-link"</span></a></h4>
+<pre class="r"><code>GetPrivacySettings(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title inferred_optout_non_mobile
+## 1   zwitchdev ZwitchCorp Dev                          0
+## 2 zwitchjulia Julia Bloggers                          0
+##   inferred_optout_mobile
+## 1                      0
+## 2                      0</code></pre>
+</div>
+<div id="getprops" class="section level4">
+<h4>GetProps <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getprops"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the props (traffic variables) for the specified report suites.</p>
+<pre class="r"><code>props &lt;- GetProps(rs$rsid)
+head(props)</code></pre>
+<pre><code>##      id                  name enabled description pathing_enabled
+## 1 prop1    Post Title (prop1)    TRUE                        TRUE
+## 2 prop2       Page ID (prop2)    TRUE                       FALSE
+## 3 prop3     Page Type (prop3)    TRUE                       FALSE
+## 4 prop4 Page Sub Type (prop4)    TRUE                       FALSE
+## 5 prop5 Post Category (prop5)    TRUE                       FALSE
+## 6 prop6     Post Tags (prop6)    TRUE                       FALSE
+##   list_enabled participation_enabled case_insensitive
+## 1        FALSE                  TRUE            FALSE
+## 2        FALSE                  TRUE            FALSE
+## 3        FALSE                  TRUE            FALSE
+## 4        FALSE                  TRUE            FALSE
+## 5         TRUE                  TRUE            FALSE
+## 6         TRUE                  TRUE            FALSE
+##   case_insensitive_date_enabled list_delimiter report_suite
+## 1                            NA           &lt;NA&gt;    zwitchdev
+## 2                            NA           &lt;NA&gt;    zwitchdev
+## 3                            NA           &lt;NA&gt;    zwitchdev
+## 4                            NA           &lt;NA&gt;    zwitchdev
+## 5                            NA              ,    zwitchdev
+## 6                            NA              ,    zwitchdev</code></pre>
+</div>
+<div id="getqueue" class="section level4">
+<h4>GetQueue <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-getqueue-2"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns a list of reports in a company’s report queue.</p>
+<pre class="r"><code>GetQueue()</code></pre>
+<pre><code>## [1] &quot;There are no reports in the Report Queue&quot;</code></pre>
+<pre><code>## list()</code></pre>
+</div>
+<div id="getrealtimereport" class="section level4">
+<h4>GetRealTimeReport <a href=""><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>‘source’ parameter present and set to ‘realtime’. Note that Real-Time reports do not have to be queued, they can run immediately using Report.Run.</p>
+<pre class="r"><code>GetRealTimeReport(&quot;zwitchdev&quot;, &quot;instances&quot;)</code></pre>
+<pre><code>##                        name year month day hour minute instances
+## 1  2017-03-03T15:36:40-0500 2017     3   3   15     36         1
+## 2  2017-03-03T15:41:40-0500 2017     3   3   15     41         0
+## 3  2017-03-03T15:46:40-0500 2017     3   3   15     46         5
+## 4  2017-03-03T15:51:40-0500 2017     3   3   15     51         6
+## 5  2017-03-03T15:56:40-0500 2017     3   3   15     56         1
+## 6  2017-03-03T16:01:40-0500 2017     3   3   16      1         1
+## 7  2017-03-03T16:06:40-0500 2017     3   3   16      6         3
+## 8  2017-03-03T16:11:40-0500 2017     3   3   16     11         1
+## 9  2017-03-03T16:16:40-0500 2017     3   3   16     16         1
+## 10 2017-03-03T16:21:40-0500 2017     3   3   16     21         0
+## 11 2017-03-03T16:26:40-0500 2017     3   3   16     26         0
+## 12 2017-03-03T16:31:40-0500 2017     3   3   16     31         1</code></pre>
+</div>
+<div id="getrealtimesettings" class="section level4">
+<h4>GetRealTimeSettings <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getrealtimesettings"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns the metrics that are configured to provide real time data.</p>
+<pre class="r"><code>GetRealTimeSettings(&quot;zwitchdev&quot;)</code></pre>
+<pre><code>##        rsid     site_title          name min_granularity ui_report
+## 1 zwitchdev ZwitchCorp Dev       testxyz               1      TRUE
+## 2 zwitchdev ZwitchCorp Dev       test111               1      TRUE
+## 3 zwitchdev ZwitchCorp Dev testsep242014               1      TRUE
+##      metric primary.dimension secondary.dimension tertiary.dimension
+## 1 instances             prop2 searchenginekeyword         geocountry
+## 2 instances             prop2 searchenginekeyword         geocountry
+## 3 instances              page searchenginekeyword         geocountry</code></pre>
+</div>
+<div id="getreportdescription" class="section level4">
+<h4>GetReportDescription <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getreportdescription"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the name, associated report type, and report description for the supplied bookmark ID. This report description can then be used to retrieve report data via the Report API. An error is returned for unsupported bookmark types.</p>
+<pre class="r"><code>GetReportDescription(&quot;15625765&quot;)</code></pre>
+<pre><code>##           name reportType reportSuiteID   dateFrom     dateTo
+## 1 TestBookmark   overtime     zwitchdev 2017-03-01 2017-03-31
+##   dateGranularity                           metrics
+## 1             day pageviews, visits, uniquevisitors</code></pre>
+</div>
+<div id="getreportsuitegroups" class="section level4">
+<h4>GetReportSuiteGroups <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getreportsuitegroups-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves a list of permission groups assigned to the specified report suite.</p>
+<pre class="r"><code>GetReportSuiteGroups(&quot;zwitchdev&quot;)</code></pre>
+<pre><code>##        rsid     site_title groupid        group_name
+## 1 zwitchdev ZwitchCorp Dev  191843 All Report Access
+##                                                                                                                                                               description
+## 1 Access to all Report Suites, Dimensions, Metrics, Channel Reports, Anomaly Detection, Current Data, Analysis Workspace, My Recommended Reports and Dashboard Reportlets
+##   type
+## 1    0</code></pre>
+</div>
+<div id="getreportsuites" class="section level4">
+<h4>GetReportSuites <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getreportsuites-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves all report suites associated with the requesting company.</p>
+<pre class="r"><code>GetReportSuites()</code></pre>
+<pre><code>##                       rsid     site_title virtual
+## 1                zwitchdev ZwitchCorp Dev      NA
+## 2              zwitchjulia Julia Bloggers      NA
+## 3         vrs_zwitch0_vrs1   zwitchdevVRS    TRUE
+## 4 vrs_zwitch0_zwitchdevvrs  zwitchdevVRS2    TRUE</code></pre>
+</div>
+<div id="getscheduledspike" class="section level4">
+<h4>GetScheduledSpike <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getscheduledspike-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the scheduled traffic increase settings for the specified report suites.</p>
+<pre class="r"><code>GetScheduledSpike(rs$rsid)</code></pre>
+<pre><code>## [1] &quot;No scheduled spikes For This Report Suite&quot;</code></pre>
+</div>
+<div id="getsegments" class="section level4">
+<h4>GetSegments <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getsegments-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the segments that are available in one or more report suites.</p>
+<pre class="r"><code>segments &lt;- GetSegments(rs$rsid)
+head(segments)</code></pre>
+<pre><code>##                                    id                       name folder
+## 1            5433e4e6e4b02df70be4ac63         Visits from Social       
+## 2            54adfe3de4b02df70be5ea08 Visits from Apple Browsers       
+## 3            5538547ae4b0b5455b976a99                   Compound       
+## 4 s300005752_58403cbfe4b0bcef55f6e6b5                Last 7 days       
+## 5 s300005752_58403d17e4b0bcef55f6e6b6                     Social       
+## 6            5433e4e6e4b02df70be4ac63         Visits from Social       
+##   class suite_enabled read_only report_suite
+## 1               FALSE     FALSE    zwitchdev
+## 2               FALSE     FALSE    zwitchdev
+## 3               FALSE     FALSE    zwitchdev
+## 4               FALSE     FALSE    zwitchdev
+## 5               FALSE     FALSE    zwitchdev
+## 6               FALSE     FALSE  zwitchjulia</code></pre>
+</div>
+<div id="getsitetitle" class="section level4">
+<h4>GetSiteTitle <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getsitetitle-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the site title (friendly name) for each of the specified report suites.</p>
+<pre class="r"><code>GetSiteTitle(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title
+## 1   zwitchdev ZwitchCorp Dev
+## 2 zwitchjulia Julia Bloggers</code></pre>
+</div>
+<div id="getsuccessevents" class="section level4">
+<h4>GetSuccessEvents <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getevents"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the success events for each of the specified report suites.</p>
+<pre class="r"><code>events &lt;- GetSuccessEvents(rs$rsid)
+head(events)</code></pre>
+<pre><code>##       id     name description     type default_metric participation
+## 1 event1 Custom 1              counter          FALSE      disabled
+## 2 event2 Custom 2              counter          FALSE      disabled
+## 3 event3 Custom 3              counter          FALSE      disabled
+## 4 event4 Custom 4              counter          FALSE      disabled
+## 5 event5 Custom 5              counter          FALSE      disabled
+## 6 event6 Custom 6             disabled          FALSE      disabled
+##   serialization polarity visibility report_suite     site_title
+## 1 always_record positive         NA    zwitchdev ZwitchCorp Dev
+## 2 always_record positive         NA    zwitchdev ZwitchCorp Dev
+## 3 always_record positive         NA    zwitchdev ZwitchCorp Dev
+## 4 always_record positive         NA    zwitchdev ZwitchCorp Dev
+## 5 always_record positive         NA    zwitchdev ZwitchCorp Dev
+## 6 always_record positive         NA    zwitchdev ZwitchCorp Dev
+##   ecommerce_level
+## 1         enabled
+## 2         enabled
+## 3         enabled
+## 4         enabled
+## 5         enabled
+## 6         enabled</code></pre>
+</div>
+<div id="gettemplate" class="section level4">
+<h4>GetTemplate <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettemplate-2"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the creation template for each of the specified report suites.</p>
+<pre class="r"><code>GetTemplate(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title       template
+## 1   zwitchdev ZwitchCorp Dev             NA
+## 2 zwitchjulia Julia Bloggers ZwitchCorp Dev</code></pre>
+</div>
+<div id="gettimestampenabled" class="section level4">
+<h4>GetTimeStampEnabled <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettimezone-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<pre class="r"><code>GetTimeStampEnabled(c(&quot;zwitchdev&quot;, &quot;zwitchjulia&quot;))</code></pre>
+<pre><code>##          rsid timestampenabled
+## 1   zwitchdev            FALSE
+## 2 zwitchjulia            FALSE</code></pre>
+</div>
+<div id="gettimezone" class="section level4">
+<h4>GetTimeZone <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettimezone-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the Time Zone setting for each of the specified report suites.</p>
+<pre class="r"><code>GetTimeZone(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title  time_zone
+## 1   zwitchdev ZwitchCorp Dev US/Eastern
+## 2 zwitchjulia Julia Bloggers US/Eastern</code></pre>
+</div>
+<div id="gettrackingserver" class="section level4">
+<h4>GetTrackingServer <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettrackingserver-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Returns the tracking server and namespace for the specified report suite. Only accepts a single report suite, as all report suites within an account will have same tracking server.</p>
+<pre class="r"><code>GetTrackingServer(&quot;zwitchdev&quot;)</code></pre>
+<pre><code>##    namespace              tracking_server
+## 1 zwitchcorp zwitchcorp.or1.sc.omtrdc.net</code></pre>
+</div>
+<div id="gettransactionenabled" class="section level4">
+<h4>GetTransactionEnabled <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-gettransactionenabled"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the transaction ids storage enable for the requested report suites.</p>
+<pre class="r"><code>GetTransactionEnabled(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title transaction
+## 1   zwitchdev ZwitchCorp Dev           0
+## 2 zwitchjulia Julia Bloggers           0</code></pre>
+</div>
+<div id="getuniquevisitorvariable" class="section level4">
+<h4>GetUniqueVisitorVariable <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getuniquevisitorvariable-1"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves the unique visitor variable setting for the specified report suites.</p>
+<pre class="r"><code>GetUniqueVisitorVariable(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title unique_visitor_variable
+## 1   zwitchdev ZwitchCorp Dev                ::none::
+## 2 zwitchjulia Julia Bloggers                ::none::</code></pre>
+</div>
+<div id="getversionaccess" class="section level4">
+<h4>GetVersionAccess <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getversionaccess"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves version access for the company of the authenticated user.</p>
+<pre class="r"><code>GetVersionAccess()</code></pre>
+<pre><code>##   AdobeProducts
+## 1        sc13_5
+## 2          sc14
+## 3          sc15
+## 4          dsc2</code></pre>
+</div>
+<div id="getvideosettings" class="section level4">
+<h4>GetVideoSettings <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getvideosettings"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Retrieves video measurement settings.</p>
+<pre class="r"><code>GetVideoSettings(rs$rsid)</code></pre>
+<pre><code>##          rsid     site_title core_enabled ad_tracking_enabled
+## 1   zwitchdev ZwitchCorp Dev        FALSE               FALSE
+## 2 zwitchjulia Julia Bloggers        FALSE               FALSE
+##   chapter_tracking_enabled quality_tracking_enabled using_custom_variables
+## 1                    FALSE                    FALSE                  FALSE
+## 2                    FALSE                    FALSE                  FALSE
+##   video_name_evar content_type_evar video_time_event video_views_event
+## 1              NA                NA               NA                NA
+## 2              NA                NA               NA                NA
+##   video_completes_event
+## 1                    NA
+## 2                    NA</code></pre>
+</div>
+<div id="getvirtualreportsuitesettings" class="section level4">
+<h4>GetVirtualReportSuiteSettings <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-getvirtualreportsuitesettings"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Get definition of virtual report suite (parent report suite and segments applied)</p>
+<pre class="r"><code>GetVirtualReportSuiteSettings(&quot;vrs_zwitch0_vrs1&quot;)</code></pre>
+<pre><code>##               rsid parent_rsid segment_list
+## 1 vrs_zwitch0_vrs1   zwitchdev   All_Visits</code></pre>
+</div>
+<div id="viewprocessingrules" class="section level4">
+<h4>ViewProcessingRules <a href=""><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>List processing rules for a report suite, along with behaviors that define the rule.</p>
+<pre class="r"><code>#No processing rules defined
+ViewProcessingRules(&quot;zwitchdev&quot;)</code></pre>
+<pre><code>##        rsid title comment rules actions
+## 1 zwitchdev</code></pre>
+<hr />
+</div>
+</div>
+<div id="analytics-functions" class="section level2">
+<h2><strong>Analytics Functions</strong> <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/get-started"><span class="glyphicon glyphicon-link"</span></a></h2>
+<p>The functions in this section represent the types of information a user can retrieve from the Adobe Analytics UI. However, in most cases, the API via RSiteCatalyst can retrieve more data than is displayed in the web interface.</p>
+<p>Note that because of the extensive number of keyword arguments for each function, it’s not feasible to show examples of all functionality. Please see the <a href="/#examples">Examples</a> section above or the detailed documentation within the RSiteCatalyst R manual.</p>
+<div id="buildclassificationvaluesegment" class="section level4">
+<h4>BuildClassificationValueSegment <a href=""><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Used for creating inline segments for use in Queue* functions. This is a convenience function to create the proper formatting for the required JSON object, it does not call the API itself.</p>
+<pre class="r"><code>vistor_segment &lt;- BuildClassificationValueSegment(element,
+                                                  search.keywords,
+                                                  classification,
+                                                  search.type)</code></pre>
+</div>
+<div id="buildrealtimereportstructure" class="section level4">
+<h4>BuildRealTimeReportStructure</h4>
+<p>Selects the metrics and elements (dimensions) on which you want Real-Time reports enabled. This is a convenience function to create the proper formatting for the required JSON object, it does not call the API itself.</p>
+<p>Use the returned list from this function as argument(s) in SaveRealTimeSettings.</p>
+<pre class="r"><code>report.test1 &lt;- BuildRealTimeReportStructure(report.name=&quot;test123&quot;,
+               metric=&quot;instances&quot;,
+               elements = c(&quot;prop2&quot;, &quot;searchenginekeyword&quot;, &quot;geocountry&quot;))
+
+report.test2 &lt;- BuildRealTimeReportStructure(report.name=&quot;test456&quot;,
+               metric=&quot;instances&quot;,
+               elements = c(&quot;prop2&quot;, &quot;searchenginekeyword&quot;, &quot;geocountry&quot;),
+               min.granularity = &quot;5&quot;)
+
+report.test3 &lt;- BuildRealTimeReportStructure(report.name=&quot;test789&quot;,
+               metric=&quot;instances&quot;,
+               elements = c(&quot;prop2&quot;, &quot;searchenginekeyword&quot;, &quot;geocountry&quot;),
+               min.granularity = &quot;5&quot;,
+               ui.report=FALSE)</code></pre>
+</div>
+<div id="getreport" class="section level4">
+<h4>GetReport <a href=""><span class="glyphicon glyphicon-link"</span></a></h4>
+<pre class="r"><code>#TBD</code></pre>
+</div>
+<div id="getreportsbyids" class="section level4">
+<h4>GetReportsByIds <a href=""><span class="glyphicon glyphicon-link"</span></a></h4>
+<pre class="r"><code>#TBD</code></pre>
+</div>
+<div id="queuedatawarehouse" class="section level4">
+<h4>QueueDataWarehouse <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>QueueDatawarehouse is a method that can both schedule Data Warehouse reports (like in the Adobe Analytics interface), as well as return reports back in the R interface as calculated by Data Warehouse (developmental). For the most part, users should pass the <code>enqueueOnly=TRUE</code> parameters with the <code>ftp</code> parameter to send reports to the FTP.</p>
+<p>API:</p>
+<pre class="r"><code># Because report sent to FTP, returns the report.id value
+QueueDataWarehouse(&quot;zwitchdev&quot;,
+                    &quot;2016-11-01&quot;,
+                    &quot;2016-11-07&quot;,
+                    c(&quot;visits&quot;, &quot;pageviews&quot;),
+                    c(&quot;page&quot;),
+                    enqueueOnly=TRUE,
+                    ftp = list(host = Sys.getenv(&quot;FTP&quot;, &quot;&quot;),
+                              port = &quot;21&quot;,
+                              directory = &quot;/DWtest/&quot;,
+                              username = Sys.getenv(&quot;FTPUSER&quot;, &quot;&quot;),
+                              password = Sys.getenv(&quot;FTPPW&quot;, &quot;&quot;),
+                              filename = &quot;myreport.csv&quot;)
+  )</code></pre>
+<pre><code>## [1] 1661786899</code></pre>
+</div>
+<div id="queuefallout" class="section level4">
+<h4>QueueFallout <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>This method generates the underlying data for a Fallout/Pathing report within Adobe Analytics. The API method supports both visits and pageviews as metrics.</p>
+<p>Adobe Analytics Interface: <img src="images/queuefallout.png" /></p>
+<p>API:</p>
+<pre class="r"><code>QueueFallout(&quot;zwitchdev&quot;,
+                   &quot;2016-08-01&quot;,
+                   &quot;2016-12-31&quot;,
+                   metric=&quot;visits&quot;,
+                   element=&quot;page&quot;,
+                   c(&quot;http://randyzwitch.com/r-amazon-ec2&quot;, &quot;http://randyzwitch.com/julia-import-data&quot;))</code></pre>
+<pre><code>## [1] &quot;Requesting URL attempt #1&quot;
+## [1] &quot;Received fallout report.&quot;</code></pre>
+<pre><code>##                                       name
+## 1      http://randyzwitch.com/r-amazon-ec2
+## 2 http://randyzwitch.com/julia-import-data
+##                                        url visits segment.id segment.name
+## 1      http://randyzwitch.com/r-amazon-ec2    768                        
+## 2 http://randyzwitch.com/julia-import-data      0</code></pre>
+</div>
+<div id="queueovertime" class="section level4">
+<h4>QueueOvertime <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>This method is analogous to the “Key Metrics” report within Adobe Analytics. Note that the API method does not return the total row, just the metrics by the time breakdown.</p>
+<p>Adobe Analytics Interface: <img src="images/queueovertime.png" /></p>
+<p>API:</p>
+<pre class="r"><code>QueueOvertime(&quot;zwitchdev&quot;, &quot;2016-09-07&quot;, &quot;2016-09-13&quot;, &quot;visits&quot;, date.granularity = &quot;week&quot;)</code></pre>
+<pre><code>## [1] &quot;Requesting URL attempt #1&quot;
+## [1] &quot;Requesting URL attempt #2&quot;
+## [1] &quot;Received overtime report.&quot;</code></pre>
+<pre><code>##     datetime                                  name year month day
+## 1 2016-09-07 Wed.  7 Sep. 2016 - Sat. 10 Sep. 2016 2016     9   7
+## 2 2016-09-11 Sun. 11 Sep. 2016 - Tue. 13 Sep. 2016 2016     9  11
+##   segment.id segment.name visits
+## 1                            967
+## 2                            657</code></pre>
+</div>
+<div id="queuepathing" class="section level4">
+<h4>QueuePathing <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>QueuePathing is the API method that calculates the underlying data for NextPage, Fallout and other path-related reports within Adobe Analytics.</p>
+<p>Adobe Analytics Interface: <img src="images/queuepathing.png" /></p>
+<p>API:</p>
+<pre class="r"><code>pathpattern &lt;- c(&quot;::anything::&quot;, &quot;::anything::&quot;)
+QueuePathing(&quot;zwitchdev&quot;,
+            &quot;2016-09-19&quot;,
+            &quot;2016-09-19&quot;,
+            metric=&quot;pageviews&quot;,
+            element=&quot;page&quot;,
+            pathpattern,
+            top = 5)</code></pre>
+<pre><code>## [1] &quot;Requesting URL attempt #1&quot;
+## [1] &quot;Requesting URL attempt #2&quot;
+## [1] &quot;Received pathing report.&quot;</code></pre>
+<pre><code>##                                                       step.1
+## 1 http://randyzwitch.com/broken-macbook-pro-hinge-fixed-free
+## 2                                               Entered Site
+## 3                                               Entered Site
+## 4  http://randyzwitch.com/creating-stacked-bar-chart-seaborn
+## 5                   http://randyzwitch.com/julia-import-data
+##                                                       step.2 count
+## 1                                                Exited Site    27
+## 2 http://randyzwitch.com/broken-macbook-pro-hinge-fixed-free    27
+## 3  http://randyzwitch.com/creating-stacked-bar-chart-seaborn    20
+## 4                                                Exited Site    19
+## 5                                                Exited Site    17
+##   segment.id segment.name
+## 1                        
+## 2                        
+## 3                        
+## 4                        
+## 5</code></pre>
+</div>
+<div id="queueranked" class="section level4">
+<h4>QueueRanked <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>QueueRanked represents the data from a ranked report within Adobe Analytics, where one or more elements is specified with no dateGranularity. Note that the API method does not return the total row, just the metrics by the breakdown(s) specified.</p>
+<p>Adobe Analytics Interface: <img src="images/queueranked.png" /></p>
+<pre class="r"><code>QueueRanked(&quot;zwitchdev&quot;, &quot;2016-10-01&quot;, &quot;2016-10-31&quot;, &quot;pageviews&quot;, &quot;page&quot;, top = 10)</code></pre>
+<pre><code>## [1] &quot;Requesting URL attempt #1&quot;
+## [1] &quot;Requesting URL attempt #2&quot;
+## [1] &quot;Received ranked report.&quot;</code></pre>
+<pre><code>##                                                            name
+## 1    http://randyzwitch.com/broken-macbook-pro-hinge-fixed-free
+## 2     http://randyzwitch.com/creating-stacked-bar-chart-seaborn
+## 3                                        http://randyzwitch.com
+## 4           http://randyzwitch.com/wordpress-jekyll-30x-speedup
+## 5             http://randyzwitch.com/hive-five-hard-won-lessons
+## 6            http://randyzwitch.com/hadoop-creating-tables-hive
+## 7                      http://randyzwitch.com/julia-import-data
+## 8  http://randyzwitch.com/creating-dummy-variables-data-frame-r
+## 9          http://randyzwitch.com/line-numbers-ipython-notebook
+## 10     http://randyzwitch.com/disable-mobile-theme-in-wordpress
+##                                                             url pageviews
+## 1    http://randyzwitch.com/broken-macbook-pro-hinge-fixed-free       887
+## 2     http://randyzwitch.com/creating-stacked-bar-chart-seaborn       640
+## 3                                        http://randyzwitch.com       567
+## 4           http://randyzwitch.com/wordpress-jekyll-30x-speedup       445
+## 5             http://randyzwitch.com/hive-five-hard-won-lessons       346
+## 6            http://randyzwitch.com/hadoop-creating-tables-hive       310
+## 7                      http://randyzwitch.com/julia-import-data       286
+## 8  http://randyzwitch.com/creating-dummy-variables-data-frame-r       195
+## 9          http://randyzwitch.com/line-numbers-ipython-notebook       195
+## 10     http://randyzwitch.com/disable-mobile-theme-in-wordpress       166
+##    segment.id segment.name
+## 1                         
+## 2                         
+## 3                         
+## 4                         
+## 5                         
+## 6                         
+## 7                         
+## 8                         
+## 9                         
+## 10</code></pre>
+</div>
+<div id="queuesummary" class="section level4">
+<h4>QueueSummary <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>QueueSummary does not map to an interface report per se; rather, QueueSummary provides the total calculation row for many reports within Adobe Analytics. It is this method that will provide ’unique` calculations such as visitors, which would be incorrectly summed across an element such as page views.</p>
+<pre class="r"><code>QueueSummary(rs$rsid, &quot;2016-09-01&quot;, &quot;visits&quot;)</code></pre>
+<pre><code>## [1] &quot;Requesting URL attempt #1&quot;
+## [1] &quot;Received summary report.&quot;</code></pre>
+<pre><code>##              period reportsuite url visits
+## 1 Thu.  1 Sep. 2016   zwitchdev        294
+## 2 Thu.  1 Sep. 2016 zwitchjulia        113</code></pre>
+</div>
+<div id="queuetrended" class="section level4">
+<h4>QueueTrended <a href="https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-queue"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>QueueTrended is similar to a QueueOvertime report, except instead of just having a metric by time granularity, you can specify an element to trend. One notable feature for the API method is that it removes the restriction of five element values to be trended over time (i.e. Top 5 pages over time)</p>
+<p>Adobe Analytics Interface: <img src="images/queuetrended.png" /></p>
+<p>API:</p>
+<pre class="r"><code>QueueTrended(&quot;zwitchdev&quot;, &quot;2016-09-07&quot;, &quot;2016-09-13&quot;, &quot;visits&quot;, &quot;page&quot;, selected = c(&quot;http://randyzwitch.com&quot;))</code></pre>
+<pre><code>## [1] &quot;Requesting URL attempt #1&quot;
+## [1] &quot;Received trended report.&quot;</code></pre>
+<pre><code>##     datetime                   name                    url visits
+## 1 2016-09-07 http://randyzwitch.com http://randyzwitch.com      8
+## 2 2016-09-08 http://randyzwitch.com http://randyzwitch.com     16
+## 3 2016-09-09 http://randyzwitch.com http://randyzwitch.com     18
+## 4 2016-09-10 http://randyzwitch.com http://randyzwitch.com     11
+## 5 2016-09-11 http://randyzwitch.com http://randyzwitch.com      9
+## 6 2016-09-12 http://randyzwitch.com http://randyzwitch.com     27
+## 7 2016-09-13 http://randyzwitch.com http://randyzwitch.com     28
+##   segment.id segment.name
+## 1                        
+## 2                        
+## 3                        
+## 4                        
+## 5                        
+## 6                        
+## 7</code></pre>
+</div>
+<div id="saverealtimesettings" class="section level4">
+<h4>SaveRealTimeSettings <a href="https://marketing.adobe.com/developer/documentation/analytics-administration-1-4/r-saverealtimesettings"><span class="glyphicon glyphicon-link"</span></a></h4>
+<p>Selects the metrics and elements (dimensions) on which you want real time reports enabled. Realtime configuration changes take 15 minutes to be reflected in reports.</p>
+<p>WARNING: This function allows you to change the settings in your Adobe Analytics UI for all users, so be sure this is what you want to do. Additionally, submitting this function with only one report will mean other reports are deleted, you’re NOT just changing a single report.</p>
+<pre class="r"><code>SaveRealTimeSettings(reportsuite.ids = &quot;&quot;, report1 = list(),
+  report2 = list(), report3 = list())</code></pre>
+</div>
+<div id="scauth" class="section level4">
+<h4>SCAuth</h4>
+<pre class="r"><code>SCAuth(&quot;username:company&quot;, &quot;cd1d234dee56e8202da6f7d3213eb1ef&quot;)</code></pre>
+</div>
+<div id="submitjsonqueuereport" class="section level4">
+<h4>SubmitJsonQueueReport</h4>
+<p>A function for advanced users, for the case where a user feels that submitting a JSON request to the Report.Queue API endpoint would be easier than using one of the pre-defined functions from RSiteCatalyst.</p>
+<pre class="r"><code>report &lt;- SubmitJsonQueueReport(&quot;valid JSON string&quot;)</code></pre>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+
+</body>
+</html>

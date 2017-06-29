@@ -1,3 +1,63 @@
+RSiteCatalyst 1.4.12
+=================
+
+* Fixed issue with GetLogin function adding selected_ims_group_list parameter to response
+
+* Fixed issue with ViewProcessingRules where nested rules threw errors (#214)
+
+* Fixed issue with GetMarketingChannelRules where nested rules threw errors, matches column duplicated values across rows (#180)
+
+* Added ability to use a segment in QueueDataWarehouse function, which was previously implemented incorrectly (#216)
+
+RSiteCatalyst 1.4.11
+=================
+
+* Fixed issue with QueueDatawarehouse not returning the proper number of results when enqueueOnly = FALSE, fixed encoding for UTF-8-BOM  (#198)
+
+* Added GetClickMapReporting, GetPreviousServerCalls (work towards #179)
+
+* Fixed parser for GetFeeds, to unnest `activity` data frame into discrete columns
+
+* Fixed issue where message 'Error in if (!is.null(elements[i, ]$classification) && nchar(elements[i,  : missing value where TRUE/FALSE needed' displayed when using multiple elements (#207) 
+
+RSiteCatalyst 1.4.10
+=================
+
+* Added QueueDatawarehouse method to retrieve data from Data Warehouse (provided by GitHub user dieguico Diego Villuendas Pellicero, #177)
+
+* Fixed bug not allowing for a list of report suites to be passed to GetRealTimeSettings (#181)
+
+* Added AppVeyor testing for Windows builds (#189)
+
+* Added (undocumented) ViewProcessingRules method, GetVirtualReportSuiteSettings, GetReportSuiteGroups, GetTimeStampEnabled (work towards #179)
+
+* Changed date argument to be optional in QueueSummary, allowing for more obvious usage of date.to and date.from parameters (#191, contributed by GitHub user jdeboer Johann de Boer)
+
+RSiteCatalyst 1.4.9
+=================
+
+* Ability to enqueue reports created by Queue* functions, rather than return reports immediately (provided by GitHub user shashispace, closing issue #165)
+
+RSiteCatalyst 1.4.8
+=================
+
+* Silence "chatty" httr warning about defaulting to UTF-8 encoding, resolving #154
+
+* Add support for segment stacking (provided graciously by Adam Gitzes, resolving #129)
+
+* Clarified documentation around using SAINT classifications as report elements
+
+* Split tests into multiple files to remedy Travis CI build failures
+
+* Added date.to and date.from to QueueSummary function for parity with other Queue* functions
+
+RSiteCatalyst 1.4.7
+=================
+
+* Set encoding to UTF-8 by default, resolving GitHub issue #151
+
+* Added `locale` keyword to SCAuth() function, so that if additional encoding issues arise, you can set the report locale, such as Germany as 'de_DE'. A full enumeration of locale codes can be found at https://marketing.adobe.com/developer/documentation/analytics-reporting-1-4/r-reportdescriptionlocale
+
 RSiteCatalyst 1.4.6
 =================
 
