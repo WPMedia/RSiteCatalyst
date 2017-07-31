@@ -78,15 +78,11 @@
 #' @export
 
 QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
-<<<<<<< HEAD
-                        top=0,start=0,selected=c(), search=c(),search.type='or',
-                        segment.id='', segments=NULL, segment.inline='', classification=c(),data.current=FALSE, 
-                        expedite=FALSE,interval.seconds=5,max.attempts=120,validate=TRUE) {
-=======
+
                         top=10,start=1,selected=c(), search=c(),search.type='or',
                         segment.id='', segment.inline='', classification=c(),data.current=FALSE,
                         expedite=FALSE,interval.seconds=5,max.attempts=120,validate=TRUE,enqueueOnly=FALSE) {
->>>>>>> randyzwitch/master
+
 
 
   # build JSON description
