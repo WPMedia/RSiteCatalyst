@@ -94,12 +94,12 @@ QueueOvertime <- function(reportsuite.id, date.from, date.to, metrics,
     report.description$reportDescription$segment_id <- unbox(segment.id) 
   }
   report.description$reportDescription$metrics = data.frame(id = metrics)
-<<<<<<< HEAD
+
   if(! is.null(segments)){
     report.description$reportDescription$segments = data.frame(id = segments)
   }
   
-  report.data <- SubmitJsonQueueReport(toJSON(report.description),interval.seconds=interval.seconds,max.attempts=max.attempts,validate=validate)
+  report.data <- SubmitJsonQueueReport(toJSON(report.description),interval.seconds=interval.seconds,max.attempts=max.attempts,validate=validate,enqueueOnly=enqueueOnly)
 
   res <- report.data
   }
@@ -133,21 +133,4 @@ data.current, expedite,interval.seconds,max.attempts,validate)))
   # Final result
   res
 }  
-=======
 
-#If segment is null, apply the standard segment unbox function
-  if(as.list(segment.id)[1]==''){
-  report.description$reportDescription$segment_id <- unbox(segment.id)
-    }
-#If segment is not null, treat it like a list of metrics.
-  else{
-  report.description$reportDescription$segments <- data.frame( id = segment.id)
-
-  }
-
-  report.data <- SubmitJsonQueueReport(toJSON(report.description),interval.seconds=interval.seconds,max.attempts=max.attempts,validate=validate,enqueueOnly=enqueueOnly)
-
-  return(report.data)
-
-}
->>>>>>> randyzwitch/master
