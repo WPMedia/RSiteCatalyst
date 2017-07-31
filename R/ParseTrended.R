@@ -101,13 +101,6 @@ ParseTrended <- function(report.data) {
   #Get segment
   seg <- report.data$report$segments
 
-<<<<<<< HEAD
-  #If segment null, don't add it in
-  if(is.null(seg)){
-    return(formatted.df)
-  } else {
-    seg = data.frame(toString(do.call(paste, c(seg['id'], sep="&"))),toString(do.call(paste, c(seg['name'], sep="&"))))
-=======
   #If segment null, make a dummy data frame
     if(is.null(seg)){
       seg <- data.frame(list("", ""))
@@ -117,7 +110,7 @@ ParseTrended <- function(report.data) {
   #If segment has values, concatenate all values with "AND".  R puts the
   #concatenated values in every single row, so I dedupe the dataframe
     else{
->>>>>>> randyzwitch/master
+
     names(seg) <- c("segment.id", "segment.name")
     seg$segment.name<-(paste(as.list(seg$segment.name),collapse=" AND "))
     seg$segment.id<-(paste(as.list(seg$segment.id),collapse=" AND "))
