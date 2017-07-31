@@ -59,8 +59,8 @@
 #' @export
 
 QueueOvertime <- function(reportsuite.id, date.from, date.to, metrics,
-                        date.granularity='day', segments=NULL, segment.id='', segment.inline='', anomaly.detection=FALSE,
-                        data.current=FALSE, expedite=FALSE,interval.seconds=5,max.attempts=120,validate=TRUE,enqueueOnly=FALSE){
+			  date.granularity='day', segments=NULL, segment.id='', segment.inline='', anomaly.detection=FALSE,
+			  data.current=FALSE, expedite=FALSE,interval.seconds=5,max.attempts=120,validate=TRUE,enqueueOnly=FALSE){
 						
   # build JSON description
   # we have to use unbox to force jsonlist not put strings into single-element arrays
