@@ -62,15 +62,11 @@ ApiRequest <- function(body='',func.name='',interval.seconds=2,max.attempts=1,pr
     
     if(response$status==200 || response$status==400) {
       # we have a valid response or a bad request error
-<<<<<<< HEAD
-      response.content <- fromJSON(content(response,'text', encoding = "UTF-8"))
-=======
       if(response$status==200) {
         response.content <- list(error = "")
       } else {
         response.content <- fromJSON(content(response,'text', encoding = "UTF-8"))
       }
->>>>>>> randyzwitch/master
       if(response$status==400&&response.content$error=='report_not_ready') {
         result <- FALSE
         Sys.sleep(interval.seconds)
@@ -98,13 +94,6 @@ ApiRequest <- function(body='',func.name='',interval.seconds=2,max.attempts=1,pr
     filename <- paste('PostRequest_',as.numeric(Sys.time()),'.', format, sep='')
     print(paste('DEBUG: saving output as',filename))
     sink(filename)
-<<<<<<< HEAD
-    at(content(response,'text', encoding = "UTF-8"))
-    sink()
-  }
-
-  data <- fromJSON(content(response,'text', encoding = "UTF-8"))
-=======
     cat(content(response,'text', encoding = "UTF-8"))
     sink()
   }
@@ -117,7 +106,6 @@ ApiRequest <- function(body='',func.name='',interval.seconds=2,max.attempts=1,pr
            response_content <- content(response,'text', encoding = "UTF-8")
            data <- read.csv(text = response_content, fileEncoding = "UTF-8-BOM")
          })
->>>>>>> randyzwitch/master
 
   return(data)
 
