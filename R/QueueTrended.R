@@ -61,7 +61,7 @@
 #' @export
 
 QueueTrended <- function(reportsuite.id, date.from, date.to, metrics, elements,
-                        top=0,start=0,selected=c(),search=c(),search.type='or',]
+                        top=0,start=0,selected=c(),search=c(),search.type='or',
                         date.granularity='day', segment.id='',segments=NULL, segment.inline='', classification = character(0), 
                         anomaly.detection=FALSE, data.current=FALSE, expedite=FALSE,
                         interval.seconds=5,max.attempts=120,validate=TRUE,enqueueOnly=FALSE) {
