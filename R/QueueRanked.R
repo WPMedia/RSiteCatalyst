@@ -113,7 +113,8 @@ if(start>0) {
     else{
       if(segment.inline!="") {  
         report.description$reportDescription$segments <- data.frame(list(segment.inline,id = segment.id)
-        } else{
+        } 
+        else {
         report.description$reportDescription$segments <- data.frame(id = segment.id)
       }
     }
