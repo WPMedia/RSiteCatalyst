@@ -111,7 +111,7 @@ if(start>0) {
       }
   #If segment is not null, treat it like a list of metrics.
     else{
-    report.description$reportDescription$segment_id <- data.frame(id=segment.id)
+    report.description$reportDescription$segment_id <- c(segment.id)
 #     report.description$reportDescription$segments <- data.frame( id = segment.id) old
     }
   if(expedite==TRUE) {
