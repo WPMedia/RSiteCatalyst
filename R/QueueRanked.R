@@ -114,7 +114,7 @@ if(paste(segment.id,collapse="")!="") {
       }
   #If segment is not null, treat it like a list of metrics.
     else{
-    report.description$reportDescription$segments <- list(segment.id,segment.inline)
+    report.description$reportDescription$segment_id <- data.frame(id=segment.id)
 
     }
   if(expedite==TRUE) {
