@@ -80,7 +80,7 @@
 QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
 
                         top=10,start=1,selected=c(), search=c(),search.type='or',
-                        segment.id='', segment.inline='', classification=c(),data.current=FALSE,
+                        segment.id='',segments=NULL, segment.inline='', classification=c(),data.current=FALSE,
                         expedite=FALSE,interval.seconds=5,max.attempts=120,validate=TRUE,enqueueOnly=FALSE) {
 
 
@@ -102,9 +102,12 @@ QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
   if(segment.inline!="") {
     report.description$reportDescription$segments <- list(segment.inline)
   }
-  if(start>0) {
-    report.description$reportDescription$startingWith <- unbox(start)
-  }
+if(start>0) {
+  report.description$reportDescription$startingWith <- unbox(start)
+  }	
+if(segment.id!="") { 	
+  report.description$reportDescription$segment_id <- unbox(segment.id) 	
+}
   #If segment is null, apply the standard segment unbox function
     if(as.list(segment.id)[1]==''){
     report.description$reportDescription$segment_id <- unbox(segment.id)
