@@ -108,7 +108,12 @@ QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
       }
   #If segment is not null, treat it like a list of metrics.
     else{
-    report.description$reportDescription$segment_id <- segment.id
+      if(segment.inline!=""){
+        report.description$reportDescription$segments <- c(data.frame(id = segment.id),segment.inline)
+        }
+      else{
+        report.description$reportDescription$segments <- data.frame( id = segment.id)
+        }
 
     }
   if(expedite==TRUE) {
