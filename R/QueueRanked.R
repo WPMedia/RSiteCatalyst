@@ -114,7 +114,11 @@ if(paste(segment.id,collapse="")!="") {
       }
   #If segment is not null, treat it like a list of metrics.
     else{
+<<<<<<< HEAD
     report.description$reportDescription$segment_id <- data.frame(id=segment.id)
+=======
+    report.description$reportDescription$segments <- data.frame( id = segment.id)
+>>>>>>> parent of 809f0d6... Update QueueRanked.R
 
     }
   if(expedite==TRUE) {
