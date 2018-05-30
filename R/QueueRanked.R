@@ -105,9 +105,6 @@ QueueRanked <- function(reportsuite.id, date.from, date.to, metrics, elements,
 if(start>0) {
   report.description$reportDescription$startingWith <- unbox(start)
   }	
-if(paste(segment.id,collapse="")!="") { 	
-  report.description$reportDescription$segment_id <- unbox(segment.id) 	
-}
   #If segment is null, apply the standard segment unbox function
     if(as.list(segment.id)[1]==''){
     report.description$reportDescription$segment_id <- unbox(segment.id)
