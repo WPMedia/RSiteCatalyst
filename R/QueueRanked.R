@@ -111,8 +111,11 @@ if(start>0) {
       }
   #If segment is not null, treat it like a list of metrics.
     else{
-    report.description$reportDescription$segment_id <- c(segment.id)
-#     report.description$reportDescription$segments <- data.frame( id = segment.id) old
+      if(segment.inline=!"") {  
+        report.description$reportDescription$segments <- data.frame(list(segment.inline,id = segment.id)
+        } else{
+        report.description$reportDescription$segments <- data.frame(id = segment.id)
+      }
     }
   if(expedite==TRUE) {
     report.description$reportDescription$expedite <- unbox(expedite)
