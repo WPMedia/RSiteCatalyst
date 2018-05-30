@@ -111,7 +111,7 @@ if(start>0) {
       }
   #If segment is not null, treat it like a list of metrics.
     else{
-      if(segment.inline=!"") {  
+      if(segment.inline!="") {  
         report.description$reportDescription$segments <- data.frame(list(segment.inline,id = segment.id)
         } else{
         report.description$reportDescription$segments <- data.frame(id = segment.id)
