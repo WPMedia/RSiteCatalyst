@@ -95,9 +95,20 @@ QueueOvertime <- function(reportsuite.id, date.from, date.to, metrics,
 	  for (rs in reportsuite.id){
 	  print(paste('Making request for', rs))
 	  
-	  res <- append(res,list(QueueOvertime(rs,date.from, date.to, metrics,
-date.granularity, segment.id,segments, segment.inline, anomaly.detection,
-data.current, expedite,interval.seconds,max.attempts,validate)))
+	  res <- append(res,list(QueueOvertime(reportsuite.id=rs,
+			date.from=date.from, 
+			date.to=date.to, 
+			metrics=metrics,
+			date.granularity=date.granularity, 
+			segment.id=segment.id,
+			segments=segments, 
+			segment.inline=segment.inline, 
+			anomaly.detection=anomaly.detection,
+			data.current=data.current, 
+			expedite=expedite,
+			interval.seconds=interval.seconds,
+			max.attempts=max.attempts,
+			validate=validate)))
 	  }
 	  # Merge the collected dataframes
 	  datetime_cache <- res[[1]]$datetime
